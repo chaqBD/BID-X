@@ -75,50 +75,51 @@ main{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:2rem 2re
 .file-meta{font-size:12px;color:var(--text-3);margin-top:2px}
 .file-change{font-size:12px;color:var(--violet);font-weight:600;cursor:pointer;background:none;border:none;text-decoration:underline;text-underline-offset:2px}
 
-/* ANALYSIS MENU */
-.analysis-menu{margin-bottom:2rem}
-.menu-header{margin-bottom:1rem}
-.menu-title{font-family:var(--syne);font-size:18px;font-weight:800;color:var(--text);margin-bottom:4px}
-.menu-sub{font-size:13px;color:var(--text-3)}
-.analysis-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.85rem}
-.ana-btn{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:1.2rem 1.25rem;cursor:pointer;text-align:left;transition:all .22s;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
-.ana-btn::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .22s;z-index:0}
-.ana-btn>*{position:relative;z-index:1}
-.ana-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-.ana-btn.active{border-color:transparent;box-shadow:var(--shadow)}
-.ana-btn-icon{font-size:24px;margin-bottom:.7rem;display:block}
-.ana-btn-label{font-family:var(--syne);font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:3px}
-.ana-btn-desc{font-size:11px;color:var(--text-3);line-height:1.5}
-.ana-btn-tag{position:absolute;top:10px;right:10px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:100px;letter-spacing:.05em;text-transform:uppercase;z-index:1}
+/* DASHBOARD LAYOUT */
+.dashboard-layout{display:flex;gap:1.25rem;align-items:flex-start}
+.content-area{flex:1;min-width:0}
 
-.ana-coral::before{background:linear-gradient(135deg,var(--coral-lt),rgba(255,101,64,.08))}
-.ana-coral:hover::before,.ana-coral.active::before{opacity:1}
-.ana-coral.active{background:var(--coral-lt);border-color:rgba(255,101,64,.3)}
-.ana-violet::before{background:linear-gradient(135deg,var(--violet-lt),rgba(124,58,237,.08))}
-.ana-violet:hover::before,.ana-violet.active::before{opacity:1}
-.ana-violet.active{background:var(--violet-lt);border-color:rgba(124,58,237,.3)}
-.ana-teal::before{background:linear-gradient(135deg,var(--teal-lt),rgba(14,165,233,.08))}
-.ana-teal:hover::before,.ana-teal.active::before{opacity:1}
-.ana-teal.active{background:var(--teal-lt);border-color:rgba(14,165,233,.3)}
-.ana-emerald::before{background:linear-gradient(135deg,var(--emerald-lt),rgba(5,150,105,.08))}
-.ana-emerald:hover::before,.ana-emerald.active::before{opacity:1}
-.ana-emerald.active{background:var(--emerald-lt);border-color:rgba(5,150,105,.3)}
-.ana-amber::before{background:linear-gradient(135deg,var(--amber-lt),rgba(245,158,11,.08))}
-.ana-amber:hover::before,.ana-amber.active::before{opacity:1}
-.ana-amber.active{background:var(--amber-lt);border-color:rgba(245,158,11,.3)}
-.ana-rose::before{background:linear-gradient(135deg,var(--rose-lt),rgba(244,63,94,.08))}
-.ana-rose:hover::before,.ana-rose.active::before{opacity:1}
-.ana-rose.active{background:var(--rose-lt);border-color:rgba(244,63,94,.3)}
-.ana-indigo::before{background:linear-gradient(135deg,var(--indigo-lt),rgba(79,70,229,.08))}
-.ana-indigo:hover::before,.ana-indigo.active::before{opacity:1}
-.ana-indigo.active{background:var(--indigo-lt);border-color:rgba(79,70,229,.3)}
+/* SIDEBAR */
+.sidebar{width:210px;flex-shrink:0;position:sticky;top:84px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow-sm);border:1px solid var(--border2);overflow:hidden}
+.sidebar-hdr{padding:.9rem 1rem .75rem;border-bottom:1px solid var(--border2)}
+.sidebar-title{font-family:var(--syne);font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase}
 
-.run-all-row{display:flex;align-items:center;gap:.85rem;margin-top:1rem}
-.btn-run-all{display:inline-flex;align-items:center;gap:8px;font-family:var(--syne);font-size:14px;font-weight:700;padding:12px 26px;border-radius:100px;cursor:pointer;border:none;background:linear-gradient(135deg,var(--coral),var(--violet));color:#fff;box-shadow:0 6px 20px rgba(124,58,237,.28);transition:all .2s}
-.btn-run-all:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,.38)}
+/* SIDEBAR BUTTONS */
+.ana-btn{width:100%;background:transparent;border:none;border-left:3px solid transparent;border-bottom:1px solid var(--border2);padding:.7rem .9rem;cursor:pointer;text-align:left;transition:all .16s;display:flex;align-items:center;gap:9px;position:relative}
+.ana-btn:last-of-type{border-bottom:none}
+.ana-btn:hover{background:var(--bg2)}
+.ana-btn-icon{font-size:15px;flex-shrink:0;width:22px;text-align:center;line-height:1}
+.ana-btn-label{font-family:var(--syne);font-size:12px;font-weight:700;color:var(--text);flex:1;line-height:1.3}
+.ana-btn-arrow{font-size:13px;color:var(--text-3);flex-shrink:0;transition:transform .16s}
+.ana-btn.active .ana-btn-arrow{transform:translateX(2px)}
+.ana-btn-desc{display:none}
+.ana-btn-tag{display:none}
+
+.ana-coral.active{background:var(--coral-lt);border-left-color:var(--coral)}
+.ana-coral.active .ana-btn-label{color:var(--coral)}
+.ana-violet.active{background:var(--violet-lt);border-left-color:var(--violet)}
+.ana-violet.active .ana-btn-label{color:var(--violet)}
+.ana-teal.active{background:var(--teal-lt);border-left-color:var(--teal)}
+.ana-teal.active .ana-btn-label{color:var(--teal)}
+.ana-emerald.active{background:var(--emerald-lt);border-left-color:var(--emerald)}
+.ana-emerald.active .ana-btn-label{color:var(--emerald)}
+.ana-amber.active{background:var(--amber-lt);border-left-color:var(--amber)}
+.ana-amber.active .ana-btn-label{color:var(--amber)}
+.ana-rose.active{background:var(--rose-lt);border-left-color:var(--rose)}
+.ana-rose.active .ana-btn-label{color:var(--rose)}
+.ana-indigo.active{background:var(--indigo-lt);border-left-color:var(--indigo)}
+.ana-indigo.active .ana-btn-label{color:var(--indigo)}
+
+.sidebar-actions{padding:.85rem 1rem;border-top:1px solid var(--border2);display:flex;flex-direction:column;gap:.5rem}
+.btn-run-all{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--syne);font-size:12px;font-weight:700;padding:9px 14px;width:100%;border-radius:100px;cursor:pointer;border:none;background:linear-gradient(135deg,var(--coral),var(--violet));color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.25);transition:all .2s}
+.btn-run-all:hover{box-shadow:0 6px 20px rgba(124,58,237,.38);transform:translateY(-1px)}
 .btn-run-all:active{transform:translateY(0)}
-.btn-reset{display:inline-flex;align-items:center;gap:6px;font-family:var(--dm);font-size:13px;font-weight:600;padding:10px 18px;border-radius:100px;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text-3);transition:all .2s}
-.btn-reset:hover{background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm)}
+.btn-reset{display:inline-flex;align-items:center;justify-content:center;gap:5px;font-family:var(--dm);font-size:11px;font-weight:600;padding:7px 14px;width:100%;border-radius:100px;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text-3);transition:all .2s}
+.btn-reset:hover{background:var(--bg2);color:var(--text)}
+
+/* DATA PREVIEW */
+.preview-card{background:var(--surface);border-radius:var(--radius);padding:1.25rem 1.5rem;box-shadow:var(--shadow-sm);border:1px solid var(--border2);margin-bottom:1.25rem}
+.preview-card .sec-hdr{margin-bottom:1rem}
 
 /* PANEL */
 .panel{display:none}
@@ -225,8 +226,8 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:10px}
 
-@media(max-width:960px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}}
-@media(max-width:640px){.analysis-grid{grid-template-columns:1fr 1fr}.kpi-grid{grid-template-columns:1fr 1fr}main{padding:1rem}header{padding:0 1rem}}
+@media(max-width:960px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.dashboard-layout{flex-direction:column}.sidebar{width:100%;position:static}.ana-btn{display:inline-flex;width:auto;border-bottom:none;border:1.5px solid var(--border2);border-radius:var(--radius-sm);margin:.25rem}.sidebar-actions{flex-direction:row}}
+@media(max-width:640px){.kpi-grid{grid-template-columns:1fr 1fr}main{padding:1rem}header{padding:0 1rem}}
 </style>
 </head>
 <body>
@@ -277,205 +278,207 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
     <button class="file-change" onclick="g('fi').click()">Change file</button>
   </div>
 
-  <!-- ANALYSIS MENU -->
-  <div class="analysis-menu" id="analysisMenu" style="display:none">
-    <div class="menu-header">
-      <div class="menu-title">Choose your analysis</div>
-      <div class="menu-sub">Click any module below to run it, or run all at once</div>
-    </div>
+  <!-- DASHBOARD: sidebar + content -->
+  <div id="dashLayout" style="display:none">
+    <div class="dashboard-layout">
 
-    <div class="analysis-grid">
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div class="sidebar-hdr">
+          <div class="sidebar-title">Analysis Modules</div>
+        </div>
 
-      <button class="ana-btn ana-coral fu d1" id="btn-overview" onclick="runAnalysis('overview')">
-        <span class="ana-btn-icon">&#128202;</span>
-        <span class="ana-btn-label">Bid Overview</span>
-        <span class="ana-btn-desc">KPIs, totals, supplier count &amp; full bid register</span>
-        <span class="ana-btn-tag" style="background:var(--coral-lt);color:var(--coral)">KPIs</span>
-      </button>
+        <button class="ana-btn ana-coral" id="btn-overview" onclick="runAnalysis('overview')">
+          <span class="ana-btn-icon">&#128202;</span>
+          <span class="ana-btn-label">Bid Overview</span>
+          <span class="ana-btn-arrow">›</span>
+        </button>
+        <button class="ana-btn ana-violet" id="btn-unitprice" onclick="runAnalysis('unitprice')">
+          <span class="ana-btn-icon">&#128161;</span>
+          <span class="ana-btn-label">Unit Price Analysis</span>
+          <span class="ana-btn-arrow">›</span>
+        </button>
+        <button class="ana-btn ana-teal" id="btn-totalcost" onclick="runAnalysis('totalcost')">
+          <span class="ana-btn-icon">&#128176;</span>
+          <span class="ana-btn-label">Total Cost Analysis</span>
+          <span class="ana-btn-arrow">›</span>
+        </button>
+        <button class="ana-btn ana-emerald" id="btn-quantity" onclick="runAnalysis('quantity')">
+          <span class="ana-btn-icon">&#128230;</span>
+          <span class="ana-btn-label">Quantity Analysis</span>
+          <span class="ana-btn-arrow">›</span>
+        </button>
+        <button class="ana-btn ana-amber" id="btn-ranking" onclick="runAnalysis('ranking')">
+          <span class="ana-btn-icon">&#127942;</span>
+          <span class="ana-btn-label">Supplier Ranking</span>
+          <span class="ana-btn-arrow">›</span>
+        </button>
+        <button class="ana-btn ana-rose" id="btn-variance" onclick="runAnalysis('variance')">
+          <span class="ana-btn-icon">&#9888;&#65039;</span>
+          <span class="ana-btn-label">Variance Analysis</span>
+          <span class="ana-btn-arrow">›</span>
+        </button>
+        <button class="ana-btn ana-indigo" id="btn-alternate" onclick="runAnalysis('alternate')">
+          <span class="ana-btn-icon">&#128260;</span>
+          <span class="ana-btn-label">Alternate Proposals</span>
+          <span class="ana-btn-arrow">›</span>
+        </button>
 
-      <button class="ana-btn ana-violet fu d2" id="btn-unitprice" onclick="runAnalysis('unitprice')">
-        <span class="ana-btn-icon">&#128161;</span>
-        <span class="ana-btn-label">Unit Price Analysis</span>
-        <span class="ana-btn-desc">Price heatmap across all suppliers &amp; products</span>
-        <span class="ana-btn-tag" style="background:var(--violet-lt);color:var(--violet)">Prices</span>
-      </button>
-
-      <button class="ana-btn ana-teal fu d3" id="btn-totalcost" onclick="runAnalysis('totalcost')">
-        <span class="ana-btn-icon">&#128176;</span>
-        <span class="ana-btn-label">Total Cost Analysis</span>
-        <span class="ana-btn-desc">Total bid amounts, bar chart &amp; cost variance</span>
-        <span class="ana-btn-tag" style="background:var(--teal-lt);color:var(--teal)">Totals</span>
-      </button>
-
-      <button class="ana-btn ana-emerald fu d4" id="btn-quantity" onclick="runAnalysis('quantity')">
-        <span class="ana-btn-icon">&#128230;</span>
-        <span class="ana-btn-label">Quantity Analysis</span>
-        <span class="ana-btn-desc">Compliance checks, deviations &amp; missing quantities</span>
-        <span class="ana-btn-tag" style="background:var(--emerald-lt);color:var(--emerald)">Qty</span>
-      </button>
-
-      <button class="ana-btn ana-amber fu d5" id="btn-ranking" onclick="runAnalysis('ranking')">
-        <span class="ana-btn-icon">&#127942;</span>
-        <span class="ana-btn-label">Supplier Ranking</span>
-        <span class="ana-btn-desc">Weighted evaluation scores &amp; full supplier ranking</span>
-        <span class="ana-btn-tag" style="background:var(--amber-lt);color:var(--amber)">Rank</span>
-      </button>
-
-      <button class="ana-btn ana-rose fu d6" id="btn-variance" onclick="runAnalysis('variance')">
-        <span class="ana-btn-icon">&#9888;&#65039;</span>
-        <span class="ana-btn-label">Variance Analysis</span>
-        <span class="ana-btn-desc">Outliers, anomalies &amp; suspiciously low bids</span>
-        <span class="ana-btn-tag" style="background:var(--rose-lt);color:var(--rose)">Alerts</span>
-      </button>
-
-      <button class="ana-btn ana-indigo fu d7" id="btn-alternate" onclick="runAnalysis('alternate')">
-        <span class="ana-btn-icon">&#128260;</span>
-        <span class="ana-btn-label">Alternate Proposals</span>
-        <span class="ana-btn-desc">Original vs alternate bids with price impact &amp; savings</span>
-        <span class="ana-btn-tag" style="background:var(--indigo-lt);color:var(--indigo)">Alts</span>
-      </button>
-
-    </div>
-
-    <div class="run-all-row">
-      <button class="btn-run-all" onclick="runAll()">&#9654; Run All Analyses</button>
-      <button class="btn-reset" onclick="resetDash()">&#8635; Reset</button>
-    </div>
-  </div>
-
-  <!-- PANELS ─────────────────────────────────── -->
-
-  <!-- 1: OVERVIEW -->
-  <div class="panel" id="panel-overview">
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-icon" style="background:var(--coral-lt)">&#128203;</div>
-        <div class="kpi-label">Total Bids</div>
-        <div class="kpi-value" id="kv-bids" style="color:var(--coral)">-</div>
-        <div class="kpi-sub" id="ks-bids"></div>
+        <div class="sidebar-actions">
+          <button class="btn-run-all" onclick="runAll()">&#9654; Run All</button>
+          <button class="btn-reset" onclick="resetDash()">&#8635; Reset</button>
+        </div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-icon" style="background:var(--emerald-lt)">&#128201;</div>
-        <div class="kpi-label">Lowest Bid</div>
-        <div class="kpi-value" id="kv-low" style="color:var(--emerald)">-</div>
-        <div class="kpi-sub" id="ks-low"></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon" style="background:var(--rose-lt)">&#128200;</div>
-        <div class="kpi-label">Highest Bid</div>
-        <div class="kpi-value" id="kv-high" style="color:var(--rose)">-</div>
-        <div class="kpi-sub" id="ks-high"></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-icon" style="background:var(--violet-lt)">&#9889;</div>
-        <div class="kpi-label">Avg Unit Price</div>
-        <div class="kpi-value" id="kv-avg" style="color:var(--violet)">-</div>
-        <div class="kpi-sub" id="ks-avg"></div>
-      </div>
-    </div>
-    <div class="card full">
-      <div class="sec-hdr">
-        <div class="sec-title">&#128203; Full Bid Register</div>
-        <div class="sec-badge" id="bid-badge" style="background:var(--coral-lt);color:var(--coral)"></div>
-      </div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Bid ID</th><th>Supplier</th><th>Category</th><th>Product</th><th>Qty</th><th>Unit Price</th><th>Total</th><th>Days</th><th>Type</th><th>vs Avg</th></tr></thead>
-        <tbody id="bidTable"></tbody>
-      </table></div>
-    </div>
-  </div>
 
-  <!-- 2: UNIT PRICE -->
-  <div class="panel" id="panel-unitprice">
-    <div class="card full">
-      <div class="sec-hdr">
-        <div class="sec-title">&#128161; Unit Price Heatmap</div>
-        <div class="sec-badge" style="background:var(--violet-lt);color:var(--violet)">Green = cheapest &nbsp;&#183;&nbsp; Red = most expensive</div>
-      </div>
-      <div id="heatmap"></div>
-    </div>
-  </div>
+      <!-- CONTENT AREA -->
+      <div class="content-area">
 
-  <!-- 3: TOTAL COST -->
-  <div class="panel" id="panel-totalcost">
-    <div class="two-col">
-      <div class="card">
-        <div class="sec-hdr"><div class="sec-title">&#128176; Total Cost by Supplier</div></div>
-        <canvas id="costChart" height="230"></canvas>
-      </div>
-      <div class="card">
-        <div class="sec-hdr"><div class="sec-title">&#128665; Avg Delivery Days</div></div>
-        <canvas id="delivChart" height="230"></canvas>
-      </div>
-    </div>
-    <div class="card full">
-      <div class="sec-hdr"><div class="sec-title">&#128202; Cost Variance vs Market Average</div></div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Supplier</th><th>Total Bid</th><th>vs Market Avg</th><th>Potential Savings</th></tr></thead>
-        <tbody id="costVarTable"></tbody>
-      </table></div>
-    </div>
-  </div>
+        <!-- DATA PREVIEW -->
+        <div class="preview-card">
+          <div class="sec-hdr">
+            <div class="sec-title">&#128203; Data Preview</div>
+            <div class="sec-badge" id="preview-badge" style="background:var(--coral-lt);color:var(--coral)"></div>
+          </div>
+          <div class="table-wrap">
+            <table><thead id="previewHead"></thead><tbody id="previewBody"></tbody></table>
+          </div>
+        </div>
 
-  <!-- 4: QUANTITY -->
-  <div class="panel" id="panel-quantity">
-    <div class="card full">
-      <div class="sec-hdr"><div class="sec-title">&#128230; Quantity Compliance by Product</div></div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Product</th><th>Avg Qty</th><th>Supplier</th><th>Quoted Qty</th><th>Deviation</th><th>Status</th></tr></thead>
-        <tbody id="qtyTable"></tbody>
-      </table></div>
-    </div>
-  </div>
+        <!-- 1: OVERVIEW -->
+        <div class="panel" id="panel-overview">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background:var(--coral-lt)">&#128203;</div>
+              <div class="kpi-label">Total Bids</div>
+              <div class="kpi-value" id="kv-bids" style="color:var(--coral)">-</div>
+              <div class="kpi-sub" id="ks-bids"></div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background:var(--emerald-lt)">&#128201;</div>
+              <div class="kpi-label">Lowest Bid</div>
+              <div class="kpi-value" id="kv-low" style="color:var(--emerald)">-</div>
+              <div class="kpi-sub" id="ks-low"></div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background:var(--rose-lt)">&#128200;</div>
+              <div class="kpi-label">Highest Bid</div>
+              <div class="kpi-value" id="kv-high" style="color:var(--rose)">-</div>
+              <div class="kpi-sub" id="ks-high"></div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background:var(--violet-lt)">&#9889;</div>
+              <div class="kpi-label">Avg Unit Price</div>
+              <div class="kpi-value" id="kv-avg" style="color:var(--violet)">-</div>
+              <div class="kpi-sub" id="ks-avg"></div>
+            </div>
+          </div>
+          <div class="card full">
+            <div class="sec-hdr">
+              <div class="sec-title">&#128203; Full Bid Register</div>
+              <div class="sec-badge" id="bid-badge" style="background:var(--coral-lt);color:var(--coral)"></div>
+            </div>
+            <div class="table-wrap"><table>
+              <thead><tr><th>Bid ID</th><th>Supplier</th><th>Category</th><th>Product</th><th>Qty</th><th>Unit Price</th><th>Total</th><th>Days</th><th>Type</th><th>vs Avg</th></tr></thead>
+              <tbody id="bidTable"></tbody>
+            </table></div>
+          </div>
+        </div>
 
-  <!-- 5: RANKING -->
-  <div class="panel" id="panel-ranking">
-    <div class="two-col">
-      <div class="card">
-        <div class="sec-hdr"><div class="sec-title">&#127942; Supplier Ranking</div></div>
-        <div class="table-wrap"><table>
-          <thead><tr><th>#</th><th>Supplier</th><th>Total Bid</th><th>Avg Delivery</th><th>Score</th></tr></thead>
-          <tbody id="rankTable"></tbody>
-        </table></div>
-      </div>
-      <div class="card">
-        <div class="sec-hdr"><div class="sec-title">&#127919; Evaluation Criteria</div></div>
-        <div class="criteria-row"><span class="cr-name">Price</span><span class="cr-weight" style="color:var(--coral)">40%</span></div>
-        <div class="criteria-row"><span class="cr-name">Delivery Time</span><span class="cr-weight" style="color:var(--teal)">25%</span></div>
-        <div class="criteria-row"><span class="cr-name">Quantity Compliance</span><span class="cr-weight" style="color:var(--emerald)">20%</span></div>
-        <div class="criteria-row"><span class="cr-name">Proposal Type</span><span class="cr-weight" style="color:var(--violet)">15%</span></div>
-        <div class="score-cards" id="evalScores"></div>
-      </div>
-    </div>
-  </div>
+        <!-- 2: UNIT PRICE -->
+        <div class="panel" id="panel-unitprice">
+          <div class="card full">
+            <div class="sec-hdr">
+              <div class="sec-title">&#128161; Unit Price Heatmap</div>
+              <div class="sec-badge" style="background:var(--violet-lt);color:var(--violet)">Green = cheapest &nbsp;&#183;&nbsp; Red = most expensive</div>
+            </div>
+            <div id="heatmap"></div>
+          </div>
+        </div>
 
-  <!-- 6: VARIANCE -->
-  <div class="panel" id="panel-variance">
-    <div class="two-col">
-      <div class="card">
-        <div class="sec-hdr"><div class="sec-title">&#9888;&#65039; Price Anomaly Flags</div></div>
-        <div id="varianceFlags"></div>
-      </div>
-      <div class="card">
-        <div class="sec-hdr"><div class="sec-title">&#128201; Outlier Price Table</div></div>
-        <div class="table-wrap"><table>
-          <thead><tr><th>Supplier</th><th>Product</th><th>Unit Price</th><th>vs Avg</th><th>Flag</th></tr></thead>
-          <tbody id="outlierTable"></tbody>
-        </table></div>
-      </div>
-    </div>
-  </div>
+        <!-- 3: TOTAL COST -->
+        <div class="panel" id="panel-totalcost">
+          <div class="two-col">
+            <div class="card">
+              <div class="sec-hdr"><div class="sec-title">&#128176; Total Cost by Supplier</div></div>
+              <canvas id="costChart" height="230"></canvas>
+            </div>
+            <div class="card">
+              <div class="sec-hdr"><div class="sec-title">&#128665; Avg Delivery Days</div></div>
+              <canvas id="delivChart" height="230"></canvas>
+            </div>
+          </div>
+          <div class="card full">
+            <div class="sec-hdr"><div class="sec-title">&#128202; Cost Variance vs Market Average</div></div>
+            <div class="table-wrap"><table>
+              <thead><tr><th>Supplier</th><th>Total Bid</th><th>vs Market Avg</th><th>Potential Savings</th></tr></thead>
+              <tbody id="costVarTable"></tbody>
+            </table></div>
+          </div>
+        </div>
 
-  <!-- 7: ALTERNATE -->
-  <div class="panel" id="panel-alternate">
-    <div class="card full">
-      <div class="sec-hdr">
-        <div class="sec-title">&#128260; Alternate Proposal Comparison</div>
-        <div class="sec-badge" style="background:var(--indigo-lt);color:var(--indigo)" id="alt-badge"></div>
-      </div>
-      <div id="altProposals"></div>
-    </div>
-  </div>
+        <!-- 4: QUANTITY -->
+        <div class="panel" id="panel-quantity">
+          <div class="card full">
+            <div class="sec-hdr"><div class="sec-title">&#128230; Quantity Compliance by Product</div></div>
+            <div class="table-wrap"><table>
+              <thead><tr><th>Product</th><th>Avg Qty</th><th>Supplier</th><th>Quoted Qty</th><th>Deviation</th><th>Status</th></tr></thead>
+              <tbody id="qtyTable"></tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <!-- 5: RANKING -->
+        <div class="panel" id="panel-ranking">
+          <div class="two-col">
+            <div class="card">
+              <div class="sec-hdr"><div class="sec-title">&#127942; Supplier Ranking</div></div>
+              <div class="table-wrap"><table>
+                <thead><tr><th>#</th><th>Supplier</th><th>Total Bid</th><th>Avg Delivery</th><th>Score</th></tr></thead>
+                <tbody id="rankTable"></tbody>
+              </table></div>
+            </div>
+            <div class="card">
+              <div class="sec-hdr"><div class="sec-title">&#127919; Evaluation Criteria</div></div>
+              <div class="criteria-row"><span class="cr-name">Price</span><span class="cr-weight" style="color:var(--coral)">40%</span></div>
+              <div class="criteria-row"><span class="cr-name">Delivery Time</span><span class="cr-weight" style="color:var(--teal)">25%</span></div>
+              <div class="criteria-row"><span class="cr-name">Quantity Compliance</span><span class="cr-weight" style="color:var(--emerald)">20%</span></div>
+              <div class="criteria-row"><span class="cr-name">Proposal Type</span><span class="cr-weight" style="color:var(--violet)">15%</span></div>
+              <div class="score-cards" id="evalScores"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6: VARIANCE -->
+        <div class="panel" id="panel-variance">
+          <div class="two-col">
+            <div class="card">
+              <div class="sec-hdr"><div class="sec-title">&#9888;&#65039; Price Anomaly Flags</div></div>
+              <div id="varianceFlags"></div>
+            </div>
+            <div class="card">
+              <div class="sec-hdr"><div class="sec-title">&#128201; Outlier Price Table</div></div>
+              <div class="table-wrap"><table>
+                <thead><tr><th>Supplier</th><th>Product</th><th>Unit Price</th><th>vs Avg</th><th>Flag</th></tr></thead>
+                <tbody id="outlierTable"></tbody>
+              </table></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7: ALTERNATE -->
+        <div class="panel" id="panel-alternate">
+          <div class="card full">
+            <div class="sec-hdr">
+              <div class="sec-title">&#128260; Alternate Proposal Comparison</div>
+              <div class="sec-badge" style="background:var(--indigo-lt);color:var(--indigo)" id="alt-badge"></div>
+            </div>
+            <div id="altProposals"></div>
+          </div>
+        </div>
+
+      </div><!-- /content-area -->
+    </div><!-- /dashboard-layout -->
+  </div><!-- /dashLayout -->
 
 </main>
 
@@ -652,10 +655,25 @@ function showMenu(fname){
   const supps=[...new Set(bids.map(b=>b.Supplier))];
   const prods=[...new Set(bids.map(b=>b.Product))];
   g('fileMeta').textContent=bids.length+' records  |  '+supps.length+' suppliers  |  '+prods.length+' products';
-  g('analysisMenu').style.display='block';
+  g('dashLayout').style.display='block';
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
   document.querySelectorAll('.ana-btn').forEach(b=>b.classList.remove('active'));
+  renderPreview();
   toast('File loaded — '+bids.length+' bid records ready');
+}
+
+function renderPreview(){
+  const rows=bids.slice(0,10);
+  if(!rows.length)return;
+  const fields=Object.keys(rows[0]);
+  g('preview-badge').textContent='Showing first '+rows.length+' of '+bids.length+' rows';
+  g('previewHead').innerHTML='<tr>'+fields.map(f=>`<th>${f.replace(/_/g,' ')}</th>`).join('')+'</tr>';
+  g('previewBody').innerHTML=rows.map(r=>'<tr>'+fields.map(f=>{
+    const v=r[f];
+    if(f==='Proposal_Type') return`<td><span class="tag ${v==='Original'?'tag-orig':'tag-alt'}">${v}</span></td>`;
+    if(f==='Unit_Price'||f==='Total_Amount') return`<td>${fmtU(+v)}</td>`;
+    return`<td>${v??'-'}</td>`;
+  }).join('')+'</tr>').join('');
 }
 
 function runAnalysis(type){
