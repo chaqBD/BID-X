@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BID-X — Procurement Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#FEFAF5;--bg2:#FFF8EF;--surface:#FFFFFF;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.04);
+  --coral:#FF6540;--coral-lt:#FFF0EC;
+  --violet:#7C3AED;--violet-lt:#F3EEFF;
+  --teal:#0EA5E9;--teal-lt:#EEF9FF;
+  --emerald:#059669;--emerald-lt:#EDFBF4;
+  --rose:#F43F5E;--rose-lt:#FFF0F3;
+  --amber:#F59E0B;--amber-lt:#FFFBEB;
+  --indigo:#4F46E5;--indigo-lt:#EEF2FF;
+  --text:#1A1523;--text-2:#4A4458;--text-3:#8B7FA8;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow:0 4px 16px rgba(0,0,0,0.07),0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.09),0 4px 12px rgba(0,0,0,0.05);
+  --radius:16px;--radius-sm:10px;
+  --syne:'Syne',sans-serif;--dm:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--dm);min-height:100vh;overflow-x:hidden}
+
+/* MESH */
+.mesh-bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:0.32;animation:drift 16s ease-in-out infinite alternate}
+.b1{width:580px;height:500px;top:-150px;right:-80px;background:radial-gradient(circle,#FF6540,#F59E0B);animation-delay:0s}
+.b2{width:480px;height:480px;bottom:-130px;left:-80px;background:radial-gradient(circle,#7C3AED,#0EA5E9);animation-delay:-7s}
+.b3{width:320px;height:320px;top:45%;left:38%;background:radial-gradient(circle,#F43F5E,#7C3AED);animation-delay:-13s;opacity:0.14}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(28px,18px) scale(1.06)}}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:68px;background:rgba(254,250,245,0.88);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:38px;height:38px;background:linear-gradient(135deg,var(--coral),var(--violet));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--syne);font-weight:800;font-size:13px;color:#fff;box-shadow:0 4px 12px rgba(255,101,64,0.35)}
+.logo-name{font-family:var(--syne);font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--coral) 30%,var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
+.logo-tagline{font-size:10px;font-weight:500;color:var(--text-3);letter-spacing:0.08em;text-transform:uppercase;margin-top:1px}
+.header-right{display:flex;align-items:center;gap:10px}
+.pill-live{display:flex;align-items:center;gap:6px;background:var(--emerald-lt);color:var(--emerald);font-size:11px;font-weight:600;padding:5px 12px;border-radius:100px;letter-spacing:0.04em}
+.pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--emerald);animation:pdot 2s ease-in-out infinite}
+@keyframes pdot{0%,100%{box-shadow:0 0 0 0 rgba(5,150,105,.4)}50%{box-shadow:0 0 0 5px rgba(5,150,105,0)}}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--dm);font-size:13px;font-weight:600;padding:9px 18px;border-radius:100px;cursor:pointer;transition:all 0.2s;border:none}
+.btn-ghost{background:transparent;color:var(--text-2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--surface);box-shadow:var(--shadow-sm)}
+.btn-primary{background:linear-gradient(135deg,var(--coral),#E0451E);color:#fff;box-shadow:0 4px 14px rgba(255,101,64,.35)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,101,64,.45)}
+.btn-primary:active{transform:translateY(0)}
+
+/* MAIN */
+main{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:2rem 2rem 4rem}
+
+/* UPLOAD */
+.upload-zone{background:var(--surface);border:2px dashed rgba(124,58,237,.22);border-radius:var(--radius);padding:3.5rem 2rem;text-align:center;cursor:pointer;transition:all .3s;box-shadow:var(--shadow-sm);margin-bottom:2rem;position:relative;overflow:hidden}
+.upload-zone::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,101,64,.04),rgba(124,58,237,.04));opacity:0;transition:opacity .3s}
+.upload-zone:hover::before,.upload-zone.over::before{opacity:1}
+.upload-zone:hover{border-color:rgba(124,58,237,.45);box-shadow:var(--shadow)}
+.upload-zone.over{border-color:var(--violet);background:var(--violet-lt)}
+.upload-emoji{font-size:3rem;display:block;margin-bottom:1rem;animation:flt 3s ease-in-out infinite}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.upload-title{font-family:var(--syne);font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px}
+.upload-sub{font-size:13px;color:var(--text-3);margin-bottom:1.75rem;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.6}
+.sample-link{display:inline-block;margin-top:1.1rem;font-size:13px;color:var(--violet);font-weight:600;cursor:pointer;background:none;border:none;text-decoration:underline;text-underline-offset:3px}
+
+/* FILE BAR */
+.file-bar{display:none;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow-sm)}
+.file-bar.show{display:flex}
+.file-icon-box{width:38px;height:38px;background:var(--coral-lt);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.file-info{flex:1}
+.file-name{font-weight:600;font-size:14px;color:var(--text)}
+.file-meta{font-size:12px;color:var(--text-3);margin-top:2px}
+.file-change{font-size:12px;color:var(--violet);font-weight:600;cursor:pointer;background:none;border:none;text-decoration:underline;text-underline-offset:2px}
+
+/* ANALYSIS MENU */
+.analysis-menu{margin-bottom:2rem}
+.menu-header{margin-bottom:1rem}
+.menu-title{font-family:var(--syne);font-size:18px;font-weight:800;color:var(--text);margin-bottom:4px}
+.menu-sub{font-size:13px;color:var(--text-3)}
+.analysis-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.85rem}
+.ana-btn{background:var(--surface);border:1.5px solid var(--border2);border-radius:var(--radius);padding:1.2rem 1.25rem;cursor:pointer;text-align:left;transition:all .22s;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.ana-btn::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .22s;z-index:0}
+.ana-btn>*{position:relative;z-index:1}
+.ana-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.ana-btn.active{border-color:transparent;box-shadow:var(--shadow)}
+.ana-btn-icon{font-size:24px;margin-bottom:.7rem;display:block}
+.ana-btn-label{font-family:var(--syne);font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:3px}
+.ana-btn-desc{font-size:11px;color:var(--text-3);line-height:1.5}
+.ana-btn-tag{position:absolute;top:10px;right:10px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:100px;letter-spacing:.05em;text-transform:uppercase;z-index:1}
+
+.ana-coral::before{background:linear-gradient(135deg,var(--coral-lt),rgba(255,101,64,.08))}
+.ana-coral:hover::before,.ana-coral.active::before{opacity:1}
+.ana-coral.active{background:var(--coral-lt);border-color:rgba(255,101,64,.3)}
+.ana-violet::before{background:linear-gradient(135deg,var(--violet-lt),rgba(124,58,237,.08))}
+.ana-violet:hover::before,.ana-violet.active::before{opacity:1}
+.ana-violet.active{background:var(--violet-lt);border-color:rgba(124,58,237,.3)}
+.ana-teal::before{background:linear-gradient(135deg,var(--teal-lt),rgba(14,165,233,.08))}
+.ana-teal:hover::before,.ana-teal.active::before{opacity:1}
+.ana-teal.active{background:var(--teal-lt);border-color:rgba(14,165,233,.3)}
+.ana-emerald::before{background:linear-gradient(135deg,var(--emerald-lt),rgba(5,150,105,.08))}
+.ana-emerald:hover::before,.ana-emerald.active::before{opacity:1}
+.ana-emerald.active{background:var(--emerald-lt);border-color:rgba(5,150,105,.3)}
+.ana-amber::before{background:linear-gradient(135deg,var(--amber-lt),rgba(245,158,11,.08))}
+.ana-amber:hover::before,.ana-amber.active::before{opacity:1}
+.ana-amber.active{background:var(--amber-lt);border-color:rgba(245,158,11,.3)}
+.ana-rose::before{background:linear-gradient(135deg,var(--rose-lt),rgba(244,63,94,.08))}
+.ana-rose:hover::before,.ana-rose.active::before{opacity:1}
+.ana-rose.active{background:var(--rose-lt);border-color:rgba(244,63,94,.3)}
+.ana-indigo::before{background:linear-gradient(135deg,var(--indigo-lt),rgba(79,70,229,.08))}
+.ana-indigo:hover::before,.ana-indigo.active::before{opacity:1}
+.ana-indigo.active{background:var(--indigo-lt);border-color:rgba(79,70,229,.3)}
+
+.run-all-row{display:flex;align-items:center;gap:.85rem;margin-top:1rem}
+.btn-run-all{display:inline-flex;align-items:center;gap:8px;font-family:var(--syne);font-size:14px;font-weight:700;padding:12px 26px;border-radius:100px;cursor:pointer;border:none;background:linear-gradient(135deg,var(--coral),var(--violet));color:#fff;box-shadow:0 6px 20px rgba(124,58,237,.28);transition:all .2s}
+.btn-run-all:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,.38)}
+.btn-run-all:active{transform:translateY(0)}
+.btn-reset{display:inline-flex;align-items:center;gap:6px;font-family:var(--dm);font-size:13px;font-weight:600;padding:10px 18px;border-radius:100px;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text-3);transition:all .2s}
+.btn-reset:hover{background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm)}
+
+/* PANEL */
+.panel{display:none}
+.panel.show{display:block;animation:fadeUp .45s cubic-bezier(.22,1,.36,1) both}
+.panel+.panel.show{margin-top:0}
+
+/* SECTION */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem}
+.sec-title{font-family:var(--syne);font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.2px}
+.sec-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.kpi-card{background:var(--surface);border-radius:var(--radius);padding:1.4rem 1.5rem;box-shadow:var(--shadow-sm);border:1px solid var(--border2);transition:all .25s;cursor:default}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.kpi-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:1rem}
+.kpi-label{font-size:12px;font-weight:500;color:var(--text-3);letter-spacing:.04em;margin-bottom:4px}
+.kpi-value{font-family:var(--syne);font-size:32px;font-weight:800;line-height:1;letter-spacing:-1px;margin-bottom:6px}
+.kpi-sub{font-size:12px;color:var(--text-3)}
+
+/* GRID */
+.two-col{display:grid;grid-template-columns:1.35fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.full{margin-bottom:1.25rem}
+
+/* CARD */
+.card{background:var(--surface);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow-sm);border:1px solid var(--border2)}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;border-bottom:1.5px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border2);transition:background .15s}
+tbody tr:hover{background:rgba(124,58,237,.025)}
+tbody tr:last-child{border-bottom:none}
+td{padding:12px 14px;color:var(--text-2);white-space:nowrap}
+td.strong{color:var(--text);font-weight:600}
+
+/* BADGES */
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;font-size:12px;font-weight:800;font-family:var(--syne)}
+.r1{background:linear-gradient(135deg,#F59E0B,#F97316);color:#fff;box-shadow:0 3px 8px rgba(249,115,22,.35)}
+.r2{background:linear-gradient(135deg,#94A3B8,#64748B);color:#fff}
+.r3{background:linear-gradient(135deg,#C4782A,#92600A);color:#fff}
+.rn{background:#F1F5F9;color:var(--text-3)}
+.tag{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600}
+.tag-orig{background:var(--teal-lt);color:var(--teal)}
+.tag-alt{background:var(--violet-lt);color:var(--violet)}
+.chip{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.chip-pos{background:#FEE2E2;color:#DC2626}
+.chip-neg{background:#D1FAE5;color:#059669}
+.chip-warn{background:var(--amber-lt);color:#B45309}
+.chip-ok{background:var(--emerald-lt);color:var(--emerald)}
+
+/* SCORE BAR */
+.score-row{display:flex;align-items:center;gap:10px}
+.score-track{flex:1;height:7px;background:#F1F5F9;border-radius:100px;overflow:hidden}
+.score-fill{height:100%;border-radius:100px;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.score-num{font-family:var(--syne);font-size:13px;font-weight:700;min-width:34px;text-align:right;color:var(--text)}
+
+/* EVAL CARDS */
+.score-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.75rem;margin-top:1.25rem}
+.score-card{border-radius:var(--radius-sm);padding:1.1rem;text-align:center;position:relative;border:1.5px solid var(--border2);background:var(--bg2);transition:all .2s}
+.score-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.score-card.winner{background:linear-gradient(135deg,var(--coral-lt),#FFF8EF);border-color:rgba(255,101,64,.3);box-shadow:0 4px 20px rgba(255,101,64,.12)}
+.sc-label{font-size:10px;font-weight:600;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.sc-score{font-family:var(--syne);font-size:38px;font-weight:800;line-height:1;letter-spacing:-2px}
+.sc-score.top{background:linear-gradient(135deg,var(--coral),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sc-score.reg{color:var(--text-2)}
+.sc-unit{font-size:10px;color:var(--text-3);margin-top:2px}
+.crown{position:absolute;top:8px;right:10px;font-size:15px}
+
+/* HEATMAP */
+.hm-cell{height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:transform .2s;cursor:default}
+.hm-cell:hover{transform:scale(1.06);z-index:2;position:relative}
+
+/* CRITERIA */
+.criteria-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border2)}
+.criteria-row:last-child{border:none}
+.cr-name{font-size:13px;font-weight:500;color:var(--text-2)}
+.cr-weight{font-family:var(--syne);font-size:14px;font-weight:700}
+
+/* VARIANCE FLAGS */
+.flag-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2)}
+.flag-row:last-child{border:none}
+.flag-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.flag-title{font-weight:600;font-size:13px;color:var(--text);margin-bottom:3px}
+.flag-desc{font-size:12px;color:var(--text-3);line-height:1.55}
+
+/* NOTIF */
+.notif{position:fixed;bottom:2rem;right:2rem;background:var(--surface);border-left:4px solid var(--coral);border-radius:var(--radius-sm);padding:1rem 1.5rem;box-shadow:var(--shadow-lg);font-size:13px;font-weight:500;color:var(--text);z-index:1000;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.22,1,.36,1);max-width:320px;display:flex;align-items:center;gap:10px}
+.notif.show{transform:translateY(0);opacity:1}
+
+/* FOOTER */
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.25rem 2rem;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-3)}
+.footer-logo{font-family:var(--syne);font-weight:800;font-size:15px;background:linear-gradient(135deg,var(--coral),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ANIMS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fadeUp .55s cubic-bezier(.22,1,.36,1) both}
+.d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}
+.d4{animation-delay:.2s}.d5{animation-delay:.25s}.d6{animation-delay:.3s}.d7{animation-delay:.35s}
+
+/* SCROLL */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:10px}
+
+@media(max-width:960px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}}
+@media(max-width:640px){.analysis-grid{grid-template-columns:1fr 1fr}.kpi-grid{grid-template-columns:1fr 1fr}main{padding:1rem}header{padding:0 1rem}}
+</style>
+</head>
+<body>
+
+<div class="mesh-bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">BX</div>
+    <div>
+      <div class="logo-name">BID-X</div>
+      <div class="logo-tagline">Procurement Intelligence</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="pill-live"><div class="pulse-dot"></div>Live Analysis</div>
+    <button class="btn btn-ghost" onclick="exportReport()">&#8595; Export</button>
+    <button class="btn btn-primary" onclick="g('fi').click()">&#8593; Upload CSV</button>
+  </div>
+  <input type="file" id="fi" accept=".csv" style="display:none" onchange="handleFile(event)">
+</header>
+
+<main>
+
+  <!-- UPLOAD -->
+  <div class="upload-zone" id="uploadZone"
+       onclick="g('fi').click()"
+       ondragover="doDrag(event,true)" ondragleave="doDrag(event,false)" ondrop="doDrop(event)">
+    <span class="upload-emoji">&#128203;</span>
+    <div class="upload-title">Drop your bid file here</div>
+    <p class="upload-sub">Upload a CSV with: <strong>Bid_ID, Supplier, Category, Product, Quantity, Unit_Price, Total_Amount, Delivery_Days, Proposal_Type</strong></p>
+    <button class="btn btn-primary" style="pointer-events:none;margin:0 auto">Choose File</button>
+    <br>
+    <button class="sample-link" onclick="event.stopPropagation();loadSample()">&#8627; Try with sample procurement data</button>
+  </div>
+
+  <!-- FILE BAR -->
+  <div class="file-bar" id="fileBar">
+    <div class="file-icon-box">&#128196;</div>
+    <div class="file-info">
+      <div class="file-name" id="fileName">-</div>
+      <div class="file-meta" id="fileMeta">-</div>
+    </div>
+    <button class="file-change" onclick="g('fi').click()">Change file</button>
+  </div>
+
+  <!-- ANALYSIS MENU -->
+  <div class="analysis-menu" id="analysisMenu" style="display:none">
+    <div class="menu-header">
+      <div class="menu-title">Choose your analysis</div>
+      <div class="menu-sub">Click any module below to run it, or run all at once</div>
+    </div>
+
+    <div class="analysis-grid">
+
+      <button class="ana-btn ana-coral fu d1" id="btn-overview" onclick="runAnalysis('overview')">
+        <span class="ana-btn-icon">&#128202;</span>
+        <span class="ana-btn-label">Bid Overview</span>
+        <span class="ana-btn-desc">KPIs, totals, supplier count &amp; full bid register</span>
+        <span class="ana-btn-tag" style="background:var(--coral-lt);color:var(--coral)">KPIs</span>
+      </button>
+
+      <button class="ana-btn ana-violet fu d2" id="btn-unitprice" onclick="runAnalysis('unitprice')">
+        <span class="ana-btn-icon">&#128161;</span>
+        <span class="ana-btn-label">Unit Price Analysis</span>
+        <span class="ana-btn-desc">Price heatmap across all suppliers &amp; products</span>
+        <span class="ana-btn-tag" style="background:var(--violet-lt);color:var(--violet)">Prices</span>
+      </button>
+
+      <button class="ana-btn ana-teal fu d3" id="btn-totalcost" onclick="runAnalysis('totalcost')">
+        <span class="ana-btn-icon">&#128176;</span>
+        <span class="ana-btn-label">Total Cost Analysis</span>
+        <span class="ana-btn-desc">Total bid amounts, bar chart &amp; cost variance</span>
+        <span class="ana-btn-tag" style="background:var(--teal-lt);color:var(--teal)">Totals</span>
+      </button>
+
+      <button class="ana-btn ana-emerald fu d4" id="btn-quantity" onclick="runAnalysis('quantity')">
+        <span class="ana-btn-icon">&#128230;</span>
+        <span class="ana-btn-label">Quantity Analysis</span>
+        <span class="ana-btn-desc">Compliance checks, deviations &amp; missing quantities</span>
+        <span class="ana-btn-tag" style="background:var(--emerald-lt);color:var(--emerald)">Qty</span>
+      </button>
+
+      <button class="ana-btn ana-amber fu d5" id="btn-ranking" onclick="runAnalysis('ranking')">
+        <span class="ana-btn-icon">&#127942;</span>
+        <span class="ana-btn-label">Supplier Ranking</span>
+        <span class="ana-btn-desc">Weighted evaluation scores &amp; full supplier ranking</span>
+        <span class="ana-btn-tag" style="background:var(--amber-lt);color:var(--amber)">Rank</span>
+      </button>
+
+      <button class="ana-btn ana-rose fu d6" id="btn-variance" onclick="runAnalysis('variance')">
+        <span class="ana-btn-icon">&#9888;&#65039;</span>
+        <span class="ana-btn-label">Variance Analysis</span>
+        <span class="ana-btn-desc">Outliers, anomalies &amp; suspiciously low bids</span>
+        <span class="ana-btn-tag" style="background:var(--rose-lt);color:var(--rose)">Alerts</span>
+      </button>
+
+      <button class="ana-btn ana-indigo fu d7" id="btn-alternate" onclick="runAnalysis('alternate')">
+        <span class="ana-btn-icon">&#128260;</span>
+        <span class="ana-btn-label">Alternate Proposals</span>
+        <span class="ana-btn-desc">Original vs alternate bids with price impact &amp; savings</span>
+        <span class="ana-btn-tag" style="background:var(--indigo-lt);color:var(--indigo)">Alts</span>
+      </button>
+
+    </div>
+
+    <div class="run-all-row">
+      <button class="btn-run-all" onclick="runAll()">&#9654; Run All Analyses</button>
+      <button class="btn-reset" onclick="resetDash()">&#8635; Reset</button>
+    </div>
+  </div>
+
+  <!-- PANELS ─────────────────────────────────── -->
+
+  <!-- 1: OVERVIEW -->
+  <div class="panel" id="panel-overview">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--coral-lt)">&#128203;</div>
+        <div class="kpi-label">Total Bids</div>
+        <div class="kpi-value" id="kv-bids" style="color:var(--coral)">-</div>
+        <div class="kpi-sub" id="ks-bids"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--emerald-lt)">&#128201;</div>
+        <div class="kpi-label">Lowest Bid</div>
+        <div class="kpi-value" id="kv-low" style="color:var(--emerald)">-</div>
+        <div class="kpi-sub" id="ks-low"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--rose-lt)">&#128200;</div>
+        <div class="kpi-label">Highest Bid</div>
+        <div class="kpi-value" id="kv-high" style="color:var(--rose)">-</div>
+        <div class="kpi-sub" id="ks-high"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--violet-lt)">&#9889;</div>
+        <div class="kpi-label">Avg Unit Price</div>
+        <div class="kpi-value" id="kv-avg" style="color:var(--violet)">-</div>
+        <div class="kpi-sub" id="ks-avg"></div>
+      </div>
+    </div>
+    <div class="card full">
+      <div class="sec-hdr">
+        <div class="sec-title">&#128203; Full Bid Register</div>
+        <div class="sec-badge" id="bid-badge" style="background:var(--coral-lt);color:var(--coral)"></div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Bid ID</th><th>Supplier</th><th>Category</th><th>Product</th><th>Qty</th><th>Unit Price</th><th>Total</th><th>Days</th><th>Type</th><th>vs Avg</th></tr></thead>
+        <tbody id="bidTable"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- 2: UNIT PRICE -->
+  <div class="panel" id="panel-unitprice">
+    <div class="card full">
+      <div class="sec-hdr">
+        <div class="sec-title">&#128161; Unit Price Heatmap</div>
+        <div class="sec-badge" style="background:var(--violet-lt);color:var(--violet)">Green = cheapest &nbsp;&#183;&nbsp; Red = most expensive</div>
+      </div>
+      <div id="heatmap"></div>
+    </div>
+  </div>
+
+  <!-- 3: TOTAL COST -->
+  <div class="panel" id="panel-totalcost">
+    <div class="two-col">
+      <div class="card">
+        <div class="sec-hdr"><div class="sec-title">&#128176; Total Cost by Supplier</div></div>
+        <canvas id="costChart" height="230"></canvas>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><div class="sec-title">&#128665; Avg Delivery Days</div></div>
+        <canvas id="delivChart" height="230"></canvas>
+      </div>
+    </div>
+    <div class="card full">
+      <div class="sec-hdr"><div class="sec-title">&#128202; Cost Variance vs Market Average</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Supplier</th><th>Total Bid</th><th>vs Market Avg</th><th>Potential Savings</th></tr></thead>
+        <tbody id="costVarTable"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- 4: QUANTITY -->
+  <div class="panel" id="panel-quantity">
+    <div class="card full">
+      <div class="sec-hdr"><div class="sec-title">&#128230; Quantity Compliance by Product</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Product</th><th>Avg Qty</th><th>Supplier</th><th>Quoted Qty</th><th>Deviation</th><th>Status</th></tr></thead>
+        <tbody id="qtyTable"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- 5: RANKING -->
+  <div class="panel" id="panel-ranking">
+    <div class="two-col">
+      <div class="card">
+        <div class="sec-hdr"><div class="sec-title">&#127942; Supplier Ranking</div></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Supplier</th><th>Total Bid</th><th>Avg Delivery</th><th>Score</th></tr></thead>
+          <tbody id="rankTable"></tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><div class="sec-title">&#127919; Evaluation Criteria</div></div>
+        <div class="criteria-row"><span class="cr-name">Price</span><span class="cr-weight" style="color:var(--coral)">40%</span></div>
+        <div class="criteria-row"><span class="cr-name">Delivery Time</span><span class="cr-weight" style="color:var(--teal)">25%</span></div>
+        <div class="criteria-row"><span class="cr-name">Quantity Compliance</span><span class="cr-weight" style="color:var(--emerald)">20%</span></div>
+        <div class="criteria-row"><span class="cr-name">Proposal Type</span><span class="cr-weight" style="color:var(--violet)">15%</span></div>
+        <div class="score-cards" id="evalScores"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6: VARIANCE -->
+  <div class="panel" id="panel-variance">
+    <div class="two-col">
+      <div class="card">
+        <div class="sec-hdr"><div class="sec-title">&#9888;&#65039; Price Anomaly Flags</div></div>
+        <div id="varianceFlags"></div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><div class="sec-title">&#128201; Outlier Price Table</div></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Supplier</th><th>Product</th><th>Unit Price</th><th>vs Avg</th><th>Flag</th></tr></thead>
+          <tbody id="outlierTable"></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7: ALTERNATE -->
+  <div class="panel" id="panel-alternate">
+    <div class="card full">
+      <div class="sec-hdr">
+        <div class="sec-title">&#128260; Alternate Proposal Comparison</div>
+        <div class="sec-badge" style="background:var(--indigo-lt);color:var(--indigo)" id="alt-badge"></div>
+      </div>
+      <div id="altProposals"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- COLUMN MAPPER MODAL -->
+<div id="colModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(26,21,35,0.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow-lg);width:100%;max-width:520px;max-height:90vh;overflow-y:auto">
+    <div style="padding:1.5rem 1.5rem 1rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-family:var(--syne);font-size:16px;font-weight:800;color:var(--text)" id="colModalTitle">Map your columns</div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:3px">Tell BID-X which column in your file maps to each field</div>
+      </div>
+      <button onclick="g('colModal').style.display='none'" style="width:30px;height:30px;border-radius:8px;border:none;background:var(--rose-lt);color:var(--rose);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">&#215;</button>
+    </div>
+    <div style="padding:1rem 1.5rem" id="colModalBody"></div>
+    <div style="padding:1rem 1.5rem;border-top:1px solid var(--border2);display:flex;gap:.75rem">
+      <button onclick="applyColumnMap()" class="btn-run-all" style="flex:1;justify-content:center">&#10003; Apply &amp; Analyse</button>
+      <button onclick="g('colModal').style.display='none'" class="btn-reset">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">BID-X</div>
+  <div>Procurement Intelligence Platform &middot; v2.1</div>
+  <div id="ts"></div>
+</footer>
+
+<div class="notif" id="notif"><span style="font-size:18px">&#10022;</span><span id="notif-msg"></span></div>
+
+<script>
+const PAL=['#FF6540','#7C3AED','#0EA5E9','#059669','#F43F5E','#F59E0B','#4F46E5'];
+
+const SAMPLE=`Bid_ID,Supplier,Category,Product,Quantity,Unit_Price,Total_Amount,Delivery_Days,Proposal_Type
+BID001,Apex Materials,Packaging,Carton Box,500,4.50,2250,5,Original
+BID002,SwiftPack Ltd,Packaging,Carton Box,500,4.20,2100,8,Alternate
+BID003,GlobalBuild,Packaging,Carton Box,480,4.75,2280,4,Original
+BID004,Apex Materials,Construction,Steel Sheet,100,15.00,1500,7,Original
+BID005,SwiftPack Ltd,Construction,Steel Sheet,100,14.20,1420,10,Original
+BID006,NovaMetal Co,Construction,Steel Sheet,100,18.00,1800,3,Alternate
+BID007,GlobalBuild,Construction,Steel Sheet,95,13.80,1311,6,Alternate
+BID008,Apex Materials,Electronics,Circuit Board,200,32.00,6400,14,Original
+BID009,SwiftPack Ltd,Electronics,Circuit Board,200,29.50,5900,12,Original
+BID010,TechSource,Electronics,Circuit Board,200,35.00,7000,7,Original
+BID011,NovaMetal Co,Electronics,Circuit Board,185,27.80,5143,9,Alternate
+BID012,GlobalBuild,Logistics,Pallet,1000,2.10,2100,3,Original
+BID013,SwiftPack Ltd,Logistics,Pallet,1000,1.95,1950,5,Alternate
+BID014,Apex Materials,Logistics,Pallet,1000,2.30,2300,4,Original
+BID015,TechSource,Logistics,Pallet,950,2.05,1947,6,Original`;
+
+let bids=[];
+
+/* client-side fallback parser (used for sample data & offline) */
+function parseCSV(t){
+  const lines=t.trim().split('\n');
+  const hdrs=lines[0].split(',').map(h=>h.trim());
+  return lines.slice(1).map(l=>{
+    const vs=l.split(',').map(v=>v.trim());
+    const o={};hdrs.forEach((h,i)=>o[h]=vs[i]||'');
+    o.Unit_Price=parseFloat(o.Unit_Price)||0;
+    o.Total_Amount=parseFloat(o.Total_Amount)||0;
+    o.Quantity=parseFloat(o.Quantity)||0;
+    o.Delivery_Days=parseInt(o.Delivery_Days)||0;
+    return o;
+  }).filter(r=>r.Supplier);
+}
+
+/* upload via Python API, fallback to client-side parse */
+async function uploadToAPI(file){
+  const fd=new FormData();fd.append('file',file);
+  const res=await fetch('/api/upload',{method:'POST',body:fd});
+  if(res.status===422){
+    const d=await res.json();
+    showColumnMapper(d,file);
+    return null;
+  }
+  const d=await res.json();
+  if(d.error){toast('Error: '+d.error);return null;}
+  if(d.unmatched_cols&&d.unmatched_cols.length)
+    toast('Note: '+d.unmatched_cols.length+' column(s) not recognised — ignored');
+  if(d.columns_detected){
+    const mapped=Object.keys(d.columns_detected).join(', ');
+    console.info('Columns mapped:',d.columns_detected);
+  }
+  return d.records;
+}
+
+function handleFile(e){
+  const f=e.target.files[0];if(!f)return;
+  uploadToAPI(f).then(records=>{
+    if(!records)return;
+    bids=records;showMenu(f.name);
+  }).catch(()=>{
+    // server not available — parse client-side
+    const r=new FileReader();
+    r.onload=ev=>{bids=parseCSV(ev.target.result);showMenu(f.name);};
+    r.readAsText(f);
+  });
+}
+function doDrag(e,on){e.preventDefault();g('uploadZone').classList.toggle('over',on)}
+function doDrop(e){
+  e.preventDefault();doDrag(e,false);
+  const f=e.dataTransfer.files[0];if(!f)return;
+  uploadToAPI(f).then(records=>{
+    if(!records)return;
+    bids=records;showMenu(f.name);
+  }).catch(()=>{
+    const r=new FileReader();
+    r.onload=ev=>{bids=parseCSV(ev.target.result);showMenu(f.name);};
+    r.readAsText(f);
+  });
+}
+function loadSample(){bids=parseCSV(SAMPLE);showMenu('sample-procurement-data.csv');}
+
+/* ── Column mapper modal (shown when Python can't auto-detect) ── */
+let _pendingFile=null;
+let _previewCols=[];
+const REQUIRED_FIELDS=['Supplier','Product','Unit_Price','Total_Amount'];
+const ALL_FIELDS=['Bid_ID','Supplier','Category','Product','Quantity','Unit_Price','Total_Amount','Delivery_Days','Proposal_Type'];
+
+function showColumnMapper(data,file){
+  _pendingFile=file;_previewCols=data.columns;
+  const modal=g('colModal');
+  g('colModalTitle').textContent='Map columns from: '+file.name;
+  const body=g('colModalBody');
+  body.innerHTML=ALL_FIELDS.map(f=>{
+    const opts=_previewCols.map(c=>`<option value="${c}" ${c.toLowerCase().includes(f.toLowerCase().replace('_',''))?'selected':''}>${c}</option>`).join('');
+    const req=REQUIRED_FIELDS.includes(f)?'<span style="color:var(--coral)">*</span>':'';
+    return`<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border2)">
+      <div style="width:130px;font-size:13px;font-weight:600;color:var(--text)">${f} ${req}</div>
+      <select id="map_${f}" style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--dm);font-size:13px;background:var(--surface)">
+        <option value="">— skip —</option>${opts}
+      </select>
+    </div>`;
+  }).join('');
+  modal.style.display='flex';
+}
+
+function applyColumnMap(){
+  const map={};
+  ALL_FIELDS.forEach(f=>{const v=g('map_'+f);if(v&&v.value)map[f]=v.value;});
+  if(!map.Supplier&&!map.Product){toast('Map at least Supplier or Product');return;}
+  g('colModal').style.display='none';
+  // re-read file with custom map
+  const r=new FileReader();
+  r.onload=ev=>{
+    const lines=ev.target.result.trim().split('\n');
+    const hdrs=lines[0].split(',').map(h=>h.trim());
+    bids=lines.slice(1).map((l,i)=>{
+      const vs=l.split(',').map(v=>v.trim());
+      const row={};hdrs.forEach((h,j)=>row[h]=vs[j]||'');
+      const clean=s=>parseFloat(String(s).replace(/[£$,]/g,''))||0;
+      const qty=clean(row[map.Quantity])||1;
+      const up=clean(row[map.Unit_Price]);
+      const ta=clean(row[map.Total_Amount])||up*qty;
+      return{
+        Bid_ID:row[map.Bid_ID]||`BID${i+1}`,
+        Supplier:row[map.Supplier]||'Unknown',
+        Category:row[map.Category]||'General',
+        Product:row[map.Product]||`Item ${i+1}`,
+        Quantity:qty,Unit_Price:up,Total_Amount:ta,
+        Delivery_Days:parseInt(row[map.Delivery_Days])||0,
+        Proposal_Type:row[map.Proposal_Type]||'Original'
+      };
+    }).filter(r=>r.Supplier&&r.Supplier!=='Unknown');
+    showMenu(_pendingFile.name);
+  };
+  r.readAsText(_pendingFile);
+}
+
+function showMenu(fname){
+  g('uploadZone').style.display='none';
+  g('fileBar').classList.add('show');
+  g('fileName').textContent=fname;
+  const supps=[...new Set(bids.map(b=>b.Supplier))];
+  const prods=[...new Set(bids.map(b=>b.Product))];
+  g('fileMeta').textContent=bids.length+' records  |  '+supps.length+' suppliers  |  '+prods.length+' products';
+  g('analysisMenu').style.display='block';
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.ana-btn').forEach(b=>b.classList.remove('active'));
+  toast('File loaded — '+bids.length+' bid records ready');
+}
+
+function runAnalysis(type){
+  const panel=g('panel-'+type);
+  const btn=g('btn-'+type);
+  btn.classList.add('active');
+  panel.classList.remove('show');
+  void panel.offsetWidth;
+  panel.classList.add('show');
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
+  const label=btn.querySelector('.ana-btn-label').textContent;
+  switch(type){
+    case 'overview':  renderOverview();  break;
+    case 'unitprice': renderUnitPrice(); break;
+    case 'totalcost': renderTotalCost(); break;
+    case 'quantity':  renderQuantity();  break;
+    case 'ranking':   renderRanking();   break;
+    case 'variance':  renderVariance();  break;
+    case 'alternate': renderAlternate(); break;
+  }
+  toast(label+' complete');
+}
+
+function runAll(){
+  ['overview','unitprice','totalcost','quantity','ranking','variance','alternate']
+    .forEach((t,i)=>setTimeout(()=>runAnalysis(t),i*130));
+  toast('Running all analyses...');
+}
+
+function resetDash(){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.ana-btn').forEach(b=>b.classList.remove('active'));
+  toast('Dashboard cleared');
+}
+
+/* helpers */
+function supps(){return[...new Set(bids.map(b=>b.Supplier))]}
+function prods(){return[...new Set(bids.map(b=>b.Product))]}
+function totBySupp(){return supps().map(s=>bids.filter(b=>b.Supplier===s).reduce((a,b)=>a+b.Total_Amount,0))}
+function avg(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0}
+function fmt(n){return'$'+Math.round(n).toLocaleString()}
+function fmtU(n){return'$'+n.toFixed(2)}
+
+function computeScores(){
+  const ss=supps();const tots=totBySupp();
+  const data=ss.map((s,i)=>({s,total:tots[i],
+    deliv:avg(bids.filter(b=>b.Supplier===s).map(b=>b.Delivery_Days)),
+    qty:avg(bids.filter(b=>b.Supplier===s).map(b=>b.Quantity)),
+    orig:bids.filter(b=>b.Supplier===s).filter(b=>b.Proposal_Type==='Original').length/Math.max(1,bids.filter(b=>b.Supplier===s).length)
+  }));
+  const maxT=Math.max(...data.map(d=>d.total)),minT=Math.min(...data.map(d=>d.total));
+  const maxD=Math.max(...data.map(d=>d.deliv)),minD=Math.min(...data.map(d=>d.deliv));
+  const maxQ=Math.max(...data.map(d=>d.qty));
+  const res={};
+  data.forEach(d=>{
+    const p=maxT===minT?100:((maxT-d.total)/(maxT-minT))*100;
+    const dv=maxD===minD?100:((maxD-d.deliv)/(maxD-minD))*100;
+    const q=maxQ>0?(d.qty/maxQ)*100:100;
+    res[d.s]=p*0.4+dv*0.25+q*0.2+d.orig*100*0.15;
+  });
+  return res;
+}
+
+/* ── 1. OVERVIEW ── */
+function renderOverview(){
+  const ss=supps();const ps=prods();const tots=totBySupp();
+  const avgU=avg(bids.map(b=>b.Unit_Price));
+  const loIdx=tots.indexOf(Math.min(...tots));
+  const hiIdx=tots.indexOf(Math.max(...tots));
+  animN('kv-bids',0,bids.length,'');
+  animN('kv-low',0,Math.min(...tots),'$');
+  animN('kv-high',0,Math.max(...tots),'$');
+  animNF('kv-avg',0,avgU,'$');
+  g('ks-bids').textContent=ss.length+' suppliers · '+ps.length+' products';
+  g('ks-low').textContent=ss[loIdx];
+  g('ks-high').textContent=ss[hiIdx];
+  g('ks-avg').textContent='across '+bids.length+' line items';
+  g('bid-badge').textContent=bids.length+' records';
+
+  const avgByP={};
+  ps.forEach(p=>{const it=bids.filter(b=>b.Product===p);avgByP[p]=avg(it.map(b=>b.Unit_Price))});
+  g('bidTable').innerHTML=bids.map(b=>{
+    const d=((b.Unit_Price-avgByP[b.Product])/avgByP[b.Product]*100).toFixed(1);
+    return`<tr>
+      <td style="color:var(--text-3);font-size:12px">${b.Bid_ID}</td>
+      <td class="strong">${b.Supplier}</td>
+      <td style="color:var(--text-3)">${b.Category}</td>
+      <td>${b.Product}</td>
+      <td>${b.Quantity.toLocaleString()}</td>
+      <td>${fmtU(b.Unit_Price)}</td>
+      <td class="strong">${fmt(b.Total_Amount)}</td>
+      <td>${b.Delivery_Days}d</td>
+      <td><span class="tag ${b.Proposal_Type==='Original'?'tag-orig':'tag-alt'}">${b.Proposal_Type}</span></td>
+      <td><span class="chip ${+d>0?'chip-pos':'chip-neg'}">${+d>0?'+':''}${d}%</span></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── 2. UNIT PRICE ── */
+function renderUnitPrice(){
+  const ss=supps();const ps=prods();
+  const lW=110;const cols=`${lW}px ${'1fr '.repeat(ss.length).trim()}`;
+  let html=`<div style="display:grid;grid-template-columns:${cols};gap:5px;margin-bottom:8px"><div></div>`;
+  ss.forEach(s=>html+=`<div style="text-align:center;font-size:10px;font-weight:600;color:var(--text-3);letter-spacing:.04em">${s.split(' ')[0]}</div>`);
+  html+='</div>';
+  ps.forEach(p=>{
+    const prices=ss.map(s=>{const m=bids.find(b=>b.Supplier===s&&b.Product===p);return m?m.Unit_Price:null});
+    const valid=prices.filter(v=>v!==null);
+    const minP=Math.min(...valid),maxP=Math.max(...valid);
+    html+=`<div style="display:grid;grid-template-columns:${cols};gap:5px;margin-bottom:5px;align-items:center">`;
+    html+=`<div style="font-size:11px;font-weight:500;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p}</div>`;
+    prices.forEach(price=>{
+      if(price===null){html+=`<div class="hm-cell" style="background:#F8F9FA;color:#CBD5E1">-</div>`;return;}
+      const n=maxP===minP?0.5:(price-minP)/(maxP-minP);
+      const r=Math.round(255*n+14*(1-n)),gv=Math.round(101*n+165*(1-n)),bv=Math.round(64*n+233*(1-n));
+      const bright=(r*299+gv*587+bv*114)/1000;
+      const tc=bright>155?'#1A1523':'#FFFFFF';
+      html+=`<div class="hm-cell" style="background:rgb(${r},${gv},${bv});color:${tc}">${fmtU(price)}</div>`;
+    });
+    html+='</div>';
+  });
+  g('heatmap').innerHTML=html;
+}
+
+/* ── 3. TOTAL COST ── */
+function renderTotalCost(){
+  const ss=supps();const tots=totBySupp();
+  const grandAvg=avg(tots);
+  setTimeout(()=>{drawCost(ss,tots);drawDeliv(ss);},60);
+  g('costVarTable').innerHTML=ss.map((s,i)=>{
+    const diff=tots[i]-grandAvg;
+    const pct=(diff/grandAvg*100).toFixed(1);
+    const saving=diff<0?fmt(Math.abs(diff)):'-';
+    return`<tr>
+      <td class="strong">${s}</td>
+      <td>${fmt(tots[i])}</td>
+      <td><span class="chip ${diff<0?'chip-neg':'chip-pos'}">${diff>0?'+':''}${pct}%</span></td>
+      <td style="color:var(--emerald);font-weight:600">${saving}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── 4. QUANTITY ── */
+function renderQuantity(){
+  const ps=prods();
+  const rows=[];
+  ps.forEach(p=>{
+    const items=bids.filter(b=>b.Product===p);
+    const avgQty=avg(items.map(b=>b.Quantity));
+    items.forEach(b=>{
+      const dev=((b.Quantity-avgQty)/avgQty*100).toFixed(1);
+      const absDev=Math.abs(+dev);
+      const statusText=absDev<5?'Compliant':absDev<15?'Minor deviation':'Significant deviation';
+      const statusIcon=absDev<5?'✅':absDev<15?'⚠️':'❌';
+      const chipClass=absDev<5?'chip-ok':absDev<15?'chip-warn':'chip-pos';
+      rows.push(`<tr>
+        <td>${p}</td>
+        <td>${Math.round(avgQty).toLocaleString()}</td>
+        <td class="strong">${b.Supplier}</td>
+        <td>${b.Quantity.toLocaleString()}</td>
+        <td><span class="chip ${chipClass}">${+dev>0?'+':''}${dev}%</span></td>
+        <td style="font-size:12px">${statusIcon} ${statusText}</td>
+      </tr>`);
+    });
+  });
+  g('qtyTable').innerHTML=rows.join('');
+}
+
+/* ── 5. RANKING ── */
+function renderRanking(){
+  const ss=supps();const tots=totBySupp();const scores=computeScores();
+  const ranked=ss.map((s,i)=>({
+    s,total:tots[i],
+    deliv:avg(bids.filter(b=>b.Supplier===s).map(b=>b.Delivery_Days)),
+    score:scores[s]
+  })).sort((a,b)=>b.score-a.score);
+
+  g('rankTable').innerHTML=ranked.map((r,i)=>`<tr>
+    <td><span class="rank-badge ${['r1','r2','r3','rn','rn','rn'][i]||'rn'}">${i+1}</span></td>
+    <td class="strong">${r.s}</td>
+    <td>${fmt(r.total)}</td>
+    <td>${r.deliv.toFixed(1)}d</td>
+    <td style="min-width:120px">
+      <div class="score-row">
+        <div class="score-track"><div class="score-fill" style="width:${Math.round(r.score)}%;background:${PAL[i%PAL.length]}"></div></div>
+        <span class="score-num">${Math.round(r.score)}</span>
+      </div>
+    </td>
+  </tr>`).join('');
+
+  g('evalScores').innerHTML=ranked.map((r,i)=>`<div class="score-card ${i===0?'winner':''}">
+    ${i===0?'<div class="crown">&#128081;</div>':''}
+    <div class="sc-label">${r.s.split(' ')[0]}</div>
+    <div class="sc-score ${i===0?'top':'reg'}">${Math.round(r.score)}</div>
+    <div class="sc-unit">/ 100</div>
+  </div>`).join('');
+}
+
+/* ── 6. VARIANCE ── */
+function renderVariance(){
+  const ps=prods();
+  const flags=[];const rows=[];
+  ps.forEach(p=>{
+    const items=bids.filter(b=>b.Product===p);
+    const avgP=avg(items.map(b=>b.Unit_Price));
+    const stdDev=Math.sqrt(avg(items.map(b=>Math.pow(b.Unit_Price-avgP,2))));
+    items.forEach(b=>{
+      const z=stdDev>0?(b.Unit_Price-avgP)/stdDev:0;
+      const pct=((b.Unit_Price-avgP)/avgP*100).toFixed(1);
+      let flagLabel='';
+      if(z<-1.5){
+        flagLabel='🔴 Suspiciously Low';
+        if(!flags.find(f=>f.key===p+'low'))
+          flags.push({key:p+'low',icon:'🔴',title:`${p} — Suspiciously Low Bid`,desc:`${b.Supplier} bid for ${p} is ${Math.abs(+pct).toFixed(1)}% below average — may indicate low quality, error, or dumping strategy`});
+      } else if(z>1.5){
+        flagLabel='🟡 Price Outlier';
+        if(!flags.find(f=>f.key===p+'high'))
+          flags.push({key:p+'high',icon:'🟡',title:`${p} — Overpriced Bid`,desc:`${b.Supplier} bid for ${p} is ${(+pct).toFixed(1)}% above average — review value justification before awarding`});
+      }
+      if(flagLabel||Math.abs(+pct)>10)
+        rows.push({s:b.Supplier,p,u:b.Unit_Price,pct,flag:flagLabel||'✅ Normal'});
+    });
+  });
+
+  g('varianceFlags').innerHTML=flags.length
+    ?flags.map(f=>`<div class="flag-row">
+        <div class="flag-icon">${f.icon}</div>
+        <div><div class="flag-title">${f.title}</div><div class="flag-desc">${f.desc}</div></div>
+      </div>`).join('')
+    :'<p style="text-align:center;padding:2rem;color:var(--text-3);font-size:13px">No major anomalies detected ✅</p>';
+
+  g('outlierTable').innerHTML=rows.length
+    ?rows.map(r=>`<tr>
+        <td class="strong">${r.s}</td><td>${r.p}</td>
+        <td>${fmtU(r.u)}</td>
+        <td><span class="chip ${+r.pct>0?'chip-pos':'chip-neg'}">${+r.pct>0?'+':''}${r.pct}%</span></td>
+        <td style="font-size:12px">${r.flag}</td>
+      </tr>`).join('')
+    :'<tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--text-3)">No significant outliers found</td></tr>';
+}
+
+/* ── 7. ALTERNATE ── */
+function renderAlternate(){
+  const origAvg={};
+  prods().forEach(p=>{
+    const os=bids.filter(b=>b.Product===p&&b.Proposal_Type==='Original');
+    if(os.length)origAvg[p]=avg(os.map(b=>b.Unit_Price));
+  });
+  const alts=bids.filter(b=>b.Proposal_Type==='Alternate');
+  g('alt-badge').textContent=alts.length+' alternate proposals';
+
+  g('altProposals').innerHTML=!alts.length
+    ?'<p style="text-align:center;padding:2rem;color:var(--text-3);font-size:13px">No alternate proposals found in this dataset</p>'
+    :`<table><thead><tr><th>Supplier</th><th>Product</th><th>Category</th><th>Unit Price</th><th>Total Amount</th><th>Delivery</th><th>vs Original Avg</th><th>Recommendation</th></tr></thead><tbody>`
+    +alts.map(b=>{
+      const base=origAvg[b.Product]||b.Unit_Price;
+      const pct=((b.Unit_Price-base)/base*100).toFixed(1);
+      const rec=+pct<-5?'✅ Consider':'⚠️ Review carefully';
+      return`<tr>
+        <td class="strong">${b.Supplier}</td><td>${b.Product}</td>
+        <td style="color:var(--text-3)">${b.Category}</td>
+        <td>${fmtU(b.Unit_Price)}</td>
+        <td>${fmt(b.Total_Amount)}</td>
+        <td>${b.Delivery_Days}d</td>
+        <td><span class="chip ${+pct<0?'chip-neg':'chip-pos'}">${+pct>0?'+':''}${pct}%</span></td>
+        <td style="font-size:12px">${rec}</td>
+      </tr>`;
+    }).join('')+'</tbody></table>';
+}
+
+/* ── CHARTS ── */
+function drawCost(ss,tots){
+  const canvas=g('costChart');const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||600,H=230;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const pad={t:20,r:10,b:52,l:72};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const max=Math.max(...tots)*1.18;
+  const bW=Math.min(cW/ss.length*0.55,52);
+  const gap=cW/ss.length;
+  let p=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<=4;i++){
+      const y=pad.t+cH*(1-i/4);
+      ctx.strokeStyle='rgba(0,0,0,0.06)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cW,y);ctx.stroke();
+      ctx.fillStyle='#B8AEC8';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='right';
+      ctx.fillText('$'+Math.round(max*i/4).toLocaleString(),pad.l-8,y+4);
+    }
+    ss.forEach((s,i)=>{
+      const x=pad.l+gap*i+gap/2-bW/2;
+      const bH=(tots[i]/max)*cH*p;const y=pad.t+cH-bH;
+      const c=PAL[i%PAL.length];
+      const gr=ctx.createLinearGradient(0,y,0,pad.t+cH);
+      gr.addColorStop(0,c);gr.addColorStop(1,c+'44');
+      ctx.fillStyle=gr;ctx.beginPath();
+      const r=6;ctx.moveTo(x+r,y);ctx.lineTo(x+bW-r,y);
+      ctx.quadraticCurveTo(x+bW,y,x+bW,y+r);
+      ctx.lineTo(x+bW,pad.t+cH);ctx.lineTo(x,pad.t+cH);ctx.lineTo(x,y+r);
+      ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#8B7FA8';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='center';
+      ctx.fillText(s.split(' ')[0],x+bW/2,pad.t+cH+16);
+      if(p>=0.98){ctx.fillStyle=c;ctx.font='bold 11px DM Sans,sans-serif';ctx.fillText('$'+tots[i].toLocaleString(),x+bW/2,y-7);}
+    });
+    if(p<1){p=Math.min(1,p+0.05);requestAnimationFrame(frame);}
+  }
+  frame();
+}
+
+function drawDeliv(ss){
+  const canvas=g('delivChart');const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||400,H=230;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const avgD=ss.map(s=>avg(bids.filter(b=>b.Supplier===s).map(b=>b.Delivery_Days)));
+  const pad={t:10,r:52,b:10,l:92};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const max=Math.max(...avgD)*1.25;
+  const bH=Math.min(cH/ss.length*0.55,26);
+  const gap=cH/ss.length;
+  let p=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    ss.forEach((s,i)=>{
+      const y=pad.t+gap*i+gap/2-bH/2;
+      const w=(avgD[i]/max)*cW*p;
+      const c=PAL[i%PAL.length];
+      ctx.fillStyle='rgba(0,0,0,0.04)';ctx.beginPath();ctx.roundRect(pad.l,y,cW,bH,bH/2);ctx.fill();
+      const gr=ctx.createLinearGradient(pad.l,0,pad.l+cW,0);
+      gr.addColorStop(0,c);gr.addColorStop(1,c+'66');
+      ctx.fillStyle=gr;ctx.beginPath();ctx.roundRect(pad.l,y,Math.max(w,bH/2),bH,bH/2);ctx.fill();
+      ctx.fillStyle='#4A4458';ctx.font='600 11px DM Sans,sans-serif';ctx.textAlign='right';
+      ctx.fillText(s.split(' ')[0],pad.l-8,y+bH/2+4);
+      if(p>=0.98){ctx.fillStyle=c;ctx.font='bold 11px DM Sans,sans-serif';ctx.textAlign='left';ctx.fillText(avgD[i].toFixed(1)+'d',pad.l+w+7,y+bH/2+4);}
+    });
+    if(p<1){p=Math.min(1,p+0.05);requestAnimationFrame(frame);}
+  }
+  frame();
+}
+
+/* ── ANIMATED NUMBERS ── */
+function animN(elId,start,end,pre){
+  const el=g(elId);const dur=1100;const t0=performance.now();
+  (function step(now){
+    const t=Math.min((now-t0)/dur,1);const e=1-Math.pow(1-t,3);const v=start+(end-start)*e;
+    el.textContent=(pre||'')+Math.round(v).toLocaleString();
+    if(t<1)requestAnimationFrame(step);
+  })(t0);
+}
+function animNF(elId,start,end,pre){
+  const el=g(elId);const dur=1100;const t0=performance.now();
+  (function step(now){
+    const t=Math.min((now-t0)/dur,1);const e=1-Math.pow(1-t,3);const v=start+(end-start)*e;
+    el.textContent=(pre||'')+v.toFixed(2);
+    if(t<1)requestAnimationFrame(step);
+  })(t0);
+}
+
+/* ── EXPORT ── */
+function exportReport(){
+  if(!bids.length){toast('Load a CSV file first');return;}
+  const h=Object.keys(bids[0]);
+  const csv=[h.join(','),...bids.map(b=>h.map(k=>b[k]).join(','))].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='BIDX-Report-'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();toast('Report exported successfully');
+}
+
+/* ── TOAST ── */
+function toast(msg){
+  const el=g('notif');g('notif-msg').textContent=msg;
+  el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+function g(x){return document.getElementById(x)}
+g('ts').textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+</script>
+</body>
+</html>
