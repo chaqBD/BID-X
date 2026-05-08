@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BID-X — Procurement Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #FEFAF5;
+  --bg2:       #FFF8EF;
+  --surface:   #FFFFFF;
+  --border:    rgba(0,0,0,0.07);
+  --border2:   rgba(0,0,0,0.04);
+  --coral:     #FF6540;
+  --coral-lt:  #FFF0EC;
+  --violet:    #7C3AED;
+  --violet-lt: #F3EEFF;
+  --teal:      #0EA5E9;
+  --teal-lt:   #EEF9FF;
+  --emerald:   #059669;
+  --emerald-lt:#EDFBF4;
+  --rose:      #F43F5E;
+  --rose-lt:   #FFF0F3;
+  --amber:     #F59E0B;
+  --amber-lt:  #FFFBEB;
+  --text:      #1A1523;
+  --text-2:    #4A4458;
+  --text-3:    #8B7FA8;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow:    0 4px 16px rgba(0,0,0,0.07),0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.09),0 4px 12px rgba(0,0,0,0.05);
+  --radius:    16px;
+  --radius-sm: 10px;
+  --syne: 'Syne', sans-serif;
+  --dm:   'DM Sans', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--dm);min-height:100vh;overflow-x:hidden}
+
+/* MESH */
+.mesh-bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:0.32;animation:drift 16s ease-in-out infinite alternate}
+.b1{width:580px;height:500px;top:-150px;right:-80px;background:radial-gradient(circle,#FF6540,#F59E0B);animation-delay:0s}
+.b2{width:480px;height:480px;bottom:-130px;left:-80px;background:radial-gradient(circle,#7C3AED,#0EA5E9);animation-delay:-7s}
+.b3{width:320px;height:320px;top:45%;left:38%;background:radial-gradient(circle,#F43F5E,#7C3AED);animation-delay:-13s;opacity:0.14}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(28px,18px) scale(1.06)}}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:68px;background:rgba(254,250,245,0.88);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:38px;height:38px;background:linear-gradient(135deg,var(--coral),var(--violet));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--syne);font-weight:800;font-size:13px;color:#fff;box-shadow:0 4px 12px rgba(255,101,64,0.35)}
+.logo-name{font-family:var(--syne);font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--coral) 30%,var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
+.logo-tagline{font-size:10px;font-weight:500;color:var(--text-3);letter-spacing:0.08em;text-transform:uppercase;margin-top:1px}
+.header-right{display:flex;align-items:center;gap:10px}
+.pill-live{display:flex;align-items:center;gap:6px;background:var(--emerald-lt);color:var(--emerald);font-size:11px;font-weight:600;padding:5px 12px;border-radius:100px;letter-spacing:0.04em}
+.pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--emerald);animation:pdot 2s ease-in-out infinite}
+@keyframes pdot{0%,100%{box-shadow:0 0 0 0 rgba(5,150,105,.4)}50%{box-shadow:0 0 0 5px rgba(5,150,105,0)}}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--dm);font-size:13px;font-weight:600;padding:9px 18px;border-radius:100px;cursor:pointer;transition:all 0.2s;border:none}
+.btn-ghost{background:transparent;color:var(--text-2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--surface);box-shadow:var(--shadow-sm)}
+.btn-primary{background:linear-gradient(135deg,var(--coral),#E0451E);color:#fff;box-shadow:0 4px 14px rgba(255,101,64,.35)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,101,64,.45)}
+.btn-primary:active{transform:translateY(0)}
+
+/* MAIN */
+main{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:2rem 2rem 4rem}
+
+/* UPLOAD */
+.upload-zone{background:var(--surface);border:2px dashed rgba(124,58,237,.22);border-radius:var(--radius);padding:3.5rem 2rem;text-align:center;cursor:pointer;transition:all .3s;box-shadow:var(--shadow-sm);margin-bottom:2rem;position:relative;overflow:hidden}
+.upload-zone::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,101,64,.04),rgba(124,58,237,.04));opacity:0;transition:opacity .3s}
+.upload-zone:hover::before,.upload-zone.over::before{opacity:1}
+.upload-zone:hover{border-color:rgba(124,58,237,.45);box-shadow:var(--shadow)}
+.upload-zone.over{border-color:var(--violet);background:var(--violet-lt)}
+.upload-emoji{font-size:3rem;display:block;margin-bottom:1rem;animation:flt 3s ease-in-out infinite}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.upload-title{font-family:var(--syne);font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px}
+.upload-sub{font-size:13px;color:var(--text-3);margin-bottom:1.75rem;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.6}
+.sample-link{display:inline-block;margin-top:1.1rem;font-size:13px;color:var(--violet);font-weight:600;cursor:pointer;background:none;border:none;text-decoration:underline;text-underline-offset:3px}
+
+/* SECTION */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.sec-title{font-family:var(--syne);font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.2px}
+.sec-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.kpi-card{background:var(--surface);border-radius:var(--radius);padding:1.4rem 1.5rem;box-shadow:var(--shadow-sm);border:1px solid var(--border2);transition:all .25s;cursor:default}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.kpi-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:1rem}
+.kpi-label{font-size:12px;font-weight:500;color:var(--text-3);letter-spacing:.04em;margin-bottom:4px}
+.kpi-value{font-family:var(--syne);font-size:32px;font-weight:800;line-height:1;letter-spacing:-1px;margin-bottom:6px}
+.kpi-sub{font-size:12px;color:var(--text-3)}
+
+/* GRID */
+.two-col{display:grid;grid-template-columns:1.35fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.full{margin-bottom:1.25rem}
+
+/* CARD */
+.card{background:var(--surface);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow-sm);border:1px solid var(--border2)}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;border-bottom:1.5px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border2);transition:background .15s}
+tbody tr:hover{background:rgba(124,58,237,.025)}
+tbody tr:last-child{border-bottom:none}
+td{padding:12px 14px;color:var(--text-2);white-space:nowrap}
+td.strong{color:var(--text);font-weight:600}
+
+/* BADGES */
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;font-size:12px;font-weight:800;font-family:var(--syne)}
+.r1{background:linear-gradient(135deg,#F59E0B,#F97316);color:#fff;box-shadow:0 3px 8px rgba(249,115,22,.35)}
+.r2{background:linear-gradient(135deg,#94A3B8,#64748B);color:#fff}
+.r3{background:linear-gradient(135deg,#C4782A,#92600A);color:#fff}
+.rn{background:#F1F5F9;color:var(--text-3)}
+.tag{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600}
+.tag-orig{background:var(--teal-lt);color:var(--teal)}
+.tag-alt{background:var(--violet-lt);color:var(--violet)}
+.chip{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.chip-pos{background:#FEE2E2;color:#DC2626}
+.chip-neg{background:#D1FAE5;color:#059669}
+
+/* SCORE BAR */
+.score-row{display:flex;align-items:center;gap:10px}
+.score-track{flex:1;height:7px;background:#F1F5F9;border-radius:100px;overflow:hidden}
+.score-fill{height:100%;border-radius:100px;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.score-num{font-family:var(--syne);font-size:13px;font-weight:700;min-width:34px;text-align:right;color:var(--text)}
+
+/* EVAL CARDS */
+.score-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:.75rem;margin-top:1.25rem}
+.score-card{border-radius:var(--radius-sm);padding:1.1rem;text-align:center;position:relative;border:1.5px solid var(--border2);background:var(--bg2);transition:all .2s}
+.score-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.score-card.winner{background:linear-gradient(135deg,var(--coral-lt),#FFF8EF);border-color:rgba(255,101,64,.3);box-shadow:0 4px 20px rgba(255,101,64,.12)}
+.sc-label{font-size:10px;font-weight:600;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.sc-score{font-family:var(--syne);font-size:40px;font-weight:800;line-height:1;letter-spacing:-2px}
+.sc-score.top{background:linear-gradient(135deg,var(--coral),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sc-score.reg{color:var(--text-2)}
+.sc-unit{font-size:10px;color:var(--text-3);margin-top:2px}
+.crown{position:absolute;top:8px;right:10px;font-size:15px}
+
+/* HEATMAP */
+.hm-row{display:grid;gap:5px;align-items:center;margin-bottom:5px}
+.hm-label{font-size:11px;font-weight:500;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hm-cell{height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:transform .2s;cursor:default}
+.hm-cell:hover{transform:scale(1.06);z-index:2;position:relative}
+
+/* CRITERIA */
+.criteria-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border2)}
+.criteria-row:last-child{border:none}
+.cr-name{font-size:13px;font-weight:500;color:var(--text-2)}
+.cr-weight{font-family:var(--syne);font-size:14px;font-weight:700}
+
+/* NOTIF */
+.notif{position:fixed;bottom:2rem;right:2rem;background:var(--surface);border-left:4px solid var(--coral);border-radius:var(--radius-sm);padding:1rem 1.5rem;box-shadow:var(--shadow-lg);font-size:13px;font-weight:500;color:var(--text);z-index:1000;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.22,1,.36,1);max-width:320px;display:flex;align-items:center;gap:10px}
+.notif.show{transform:translateY(0);opacity:1}
+
+/* FOOTER */
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.25rem 2rem;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-3)}
+.footer-logo{font-family:var(--syne);font-weight:800;font-size:15px;background:linear-gradient(135deg,var(--coral),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ANIMS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fadeUp .55s cubic-bezier(.22,1,.36,1) both}
+.d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}.d4{animation-delay:.32s}
+
+/* SCROLL */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:10px}
+
+@media(max-width:960px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}}
+@media(max-width:560px){.kpi-grid{grid-template-columns:1fr 1fr}main{padding:1rem}header{padding:0 1rem}}
+</style>
+</head>
+<body>
+
+<div class="mesh-bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">BX</div>
+    <div>
+      <div class="logo-name">BID-X</div>
+      <div class="logo-tagline">Procurement Intelligence</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="pill-live"><div class="pulse-dot"></div>Live Analysis</div>
+    <button class="btn btn-ghost" onclick="exportReport()">⬇ Export</button>
+    <button class="btn btn-primary" onclick="document.getElementById('fi').click()">⬆ Upload CSV</button>
+  </div>
+  <input type="file" id="fi" accept=".csv" style="display:none" onchange="handleFile(event)">
+</header>
+
+<main>
+
+  <!-- UPLOAD -->
+  <div class="upload-zone" id="uploadZone"
+       onclick="document.getElementById('fi').click()"
+       ondragover="doDrag(event,true)" ondragleave="doDrag(event,false)" ondrop="doDrop(event)">
+    <span class="upload-emoji">📊</span>
+    <div class="upload-title">Drop your bid file here</div>
+    <p class="upload-sub">Upload a CSV with: Bid_ID, Supplier, Category, Product, Quantity, Unit_Price, Total_Amount, Delivery_Days, Proposal_Type</p>
+    <button class="btn btn-primary" style="pointer-events:none;margin:0 auto">Choose File</button>
+    <br>
+    <button class="sample-link" onclick="event.stopPropagation();loadSample()">✦ Try with sample procurement data</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" style="display:none">
+
+    <div class="kpi-grid fu d1">
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--coral-lt)">📋</div>
+        <div class="kpi-label">Total Bids</div>
+        <div class="kpi-value" id="kv-bids" style="color:var(--coral)">—</div>
+        <div class="kpi-sub" id="ks-bids"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--emerald-lt)">💚</div>
+        <div class="kpi-label">Lowest Bid</div>
+        <div class="kpi-value" id="kv-low" style="color:var(--emerald)">—</div>
+        <div class="kpi-sub" id="ks-low"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--rose-lt)">📈</div>
+        <div class="kpi-label">Highest Bid</div>
+        <div class="kpi-value" id="kv-high" style="color:var(--rose)">—</div>
+        <div class="kpi-sub" id="ks-high"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--violet-lt)">⚡</div>
+        <div class="kpi-label">Avg Unit Price</div>
+        <div class="kpi-value" id="kv-avg" style="color:var(--violet)">—</div>
+        <div class="kpi-sub" id="ks-avg"></div>
+      </div>
+    </div>
+
+    <div class="two-col fu d2">
+      <div class="card">
+        <div class="sec-hdr"><div class="sec-title">💰 Total Cost by Supplier</div></div>
+        <canvas id="costChart" height="230"></canvas>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><div class="sec-title">🚚 Delivery Days</div></div>
+        <canvas id="delivChart" height="230"></canvas>
+      </div>
+    </div>
+
+    <div class="two-col fu d3">
+      <div class="card">
+        <div class="sec-hdr">
+          <div class="sec-title">🌡️ Unit Price Heatmap</div>
+          <div class="sec-badge" style="background:var(--violet-lt);color:var(--violet)">Per Product</div>
+        </div>
+        <div id="heatmap"></div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><div class="sec-title">🏆 Supplier Ranking</div></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>#</th><th>Supplier</th><th>Total</th><th>Delivery</th><th>Score</th></tr></thead>
+          <tbody id="rankTable"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="card full fu d3">
+      <div class="sec-hdr">
+        <div class="sec-title">📄 Full Bid Comparison</div>
+        <div class="sec-badge" id="bid-badge" style="background:var(--coral-lt);color:var(--coral)"></div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Bid ID</th><th>Supplier</th><th>Category</th><th>Product</th><th>Qty</th><th>Unit Price</th><th>Total</th><th>Days</th><th>Type</th><th>vs Avg</th></tr></thead>
+        <tbody id="bidTable"></tbody>
+      </table></div>
+    </div>
+
+    <div class="two-col fu d4">
+      <div class="card">
+        <div class="sec-hdr"><div class="sec-title">🎯 Bid Evaluation Score</div></div>
+        <div class="criteria-row"><span class="cr-name">Price</span><span class="cr-weight" style="color:var(--coral)">40%</span></div>
+        <div class="criteria-row"><span class="cr-name">Delivery Time</span><span class="cr-weight" style="color:var(--teal)">25%</span></div>
+        <div class="criteria-row"><span class="cr-name">Quantity Compliance</span><span class="cr-weight" style="color:var(--emerald)">20%</span></div>
+        <div class="criteria-row"><span class="cr-name">Proposal Type</span><span class="cr-weight" style="color:var(--violet)">15%</span></div>
+        <div class="score-cards" id="evalScores"></div>
+      </div>
+      <div class="card">
+        <div class="sec-hdr"><div class="sec-title">🔄 Alternate Proposals</div></div>
+        <div id="altProposals"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-logo">BID-X</div>
+  <div>Procurement Intelligence Platform · v2.0</div>
+  <div id="ts"></div>
+</footer>
+
+<div class="notif" id="notif"><span style="font-size:18px">✓</span><span id="notif-msg"></span></div>
+
+<script>
+const PAL=['#FF6540','#7C3AED','#0EA5E9','#059669','#F43F5E','#F59E0B'];
+
+const SAMPLE=`Bid_ID,Supplier,Category,Product,Quantity,Unit_Price,Total_Amount,Delivery_Days,Proposal_Type
+BID001,Apex Materials,Packaging,Carton Box,500,4.50,2250,5,Original
+BID002,SwiftPack Ltd,Packaging,Carton Box,500,4.20,2100,8,Alternate
+BID003,GlobalBuild,Packaging,Carton Box,480,4.75,2280,4,Original
+BID004,Apex Materials,Construction,Steel Sheet,100,15.00,1500,7,Original
+BID005,SwiftPack Ltd,Construction,Steel Sheet,100,14.20,1420,10,Original
+BID006,NovaMetal Co,Construction,Steel Sheet,100,18.00,1800,3,Alternate
+BID007,GlobalBuild,Construction,Steel Sheet,95,13.80,1311,6,Alternate
+BID008,Apex Materials,Electronics,Circuit Board,200,32.00,6400,14,Original
+BID009,SwiftPack Ltd,Electronics,Circuit Board,200,29.50,5900,12,Original
+BID010,TechSource,Electronics,Circuit Board,200,35.00,7000,7,Original
+BID011,NovaMetal Co,Electronics,Circuit Board,185,27.80,5143,9,Alternate
+BID012,GlobalBuild,Logistics,Pallet,1000,2.10,2100,3,Original
+BID013,SwiftPack Ltd,Logistics,Pallet,1000,1.95,1950,5,Alternate
+BID014,Apex Materials,Logistics,Pallet,1000,2.30,2300,4,Original
+BID015,TechSource,Logistics,Pallet,950,2.05,1947,6,Original`;
+
+let bids=[];
+
+function parseCSV(t){
+  const lines=t.trim().split('\n');
+  const hdrs=lines[0].split(',').map(h=>h.trim());
+  return lines.slice(1).map(l=>{
+    const vs=l.split(',').map(v=>v.trim());
+    const o={}; hdrs.forEach((h,i)=>o[h]=vs[i]||'');
+    o.Unit_Price=parseFloat(o.Unit_Price)||0;
+    o.Total_Amount=parseFloat(o.Total_Amount)||0;
+    o.Quantity=parseFloat(o.Quantity)||0;
+    o.Delivery_Days=parseInt(o.Delivery_Days)||0;
+    return o;
+  }).filter(r=>r.Supplier);
+}
+
+function handleFile(e){
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{bids=parseCSV(ev.target.result);render();toast('✦ '+f.name+' loaded')};
+  r.readAsText(f);
+}
+
+function doDrag(e,on){e.preventDefault();document.getElementById('uploadZone').classList.toggle('over',on)}
+function doDrop(e){
+  e.preventDefault();doDrag(e,false);
+  const f=e.dataTransfer.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{bids=parseCSV(ev.target.result);render();toast('✦ '+f.name+' loaded')};
+  r.readAsText(f);
+}
+function loadSample(){bids=parseCSV(SAMPLE);render();toast('✦ Sample procurement data loaded')}
+
+function render(){
+  document.getElementById('uploadZone').style.display='none';
+  const dash=document.getElementById('dash');
+  dash.style.display='block';
+  dash.querySelectorAll('.fu').forEach(el=>{el.style.animation='none';void el.offsetWidth;el.style.animation=''});
+
+  const suppliers=[...new Set(bids.map(b=>b.Supplier))];
+  const products=[...new Set(bids.map(b=>b.Product))];
+  const totBySupp=suppliers.map(s=>bids.filter(b=>b.Supplier===s).reduce((a,b)=>a+b.Total_Amount,0));
+  const allU=bids.map(b=>b.Unit_Price);
+  const avgU=allU.reduce((a,b)=>a+b,0)/allU.length;
+  const loIdx=totBySupp.indexOf(Math.min(...totBySupp));
+  const hiIdx=totBySupp.indexOf(Math.max(...totBySupp));
+
+  animN('kv-bids',0,bids.length,'','');
+  animN('kv-low',0,Math.min(...totBySupp),'£','');
+  animN('kv-high',0,Math.max(...totBySupp),'£','');
+  animN('kv-avg',0,avgU,'£','',true);
+  id('ks-bids').textContent=suppliers.length+' suppliers · '+products.length+' products';
+  id('ks-low').textContent=suppliers[loIdx];
+  id('ks-high').textContent=suppliers[hiIdx];
+  id('ks-avg').textContent='across '+bids.length+' line items';
+  id('bid-badge').textContent=bids.length+' records';
+
+  setTimeout(()=>{drawCost(suppliers,totBySupp);drawDeliv(suppliers)},80);
+  drawHeatmap(products,suppliers);
+
+  // Bid table
+  const avgByP={};
+  products.forEach(p=>{const it=bids.filter(b=>b.Product===p);avgByP[p]=it.reduce((a,b)=>a+b.Unit_Price,0)/it.length});
+  id('bidTable').innerHTML=bids.map(b=>{
+    const d=((b.Unit_Price-avgByP[b.Product])/avgByP[b.Product]*100).toFixed(1);
+    const s=d>0?'+':'';
+    return`<tr>
+      <td style="color:var(--text-3);font-size:12px">${b.Bid_ID}</td>
+      <td class="strong">${b.Supplier}</td>
+      <td style="color:var(--text-3)">${b.Category}</td>
+      <td>${b.Product}</td>
+      <td>${b.Quantity.toLocaleString()}</td>
+      <td>£${b.Unit_Price.toFixed(2)}</td>
+      <td class="strong">£${b.Total_Amount.toLocaleString()}</td>
+      <td>${b.Delivery_Days}d</td>
+      <td><span class="tag ${b.Proposal_Type==='Original'?'tag-orig':'tag-alt'}">${b.Proposal_Type}</span></td>
+      <td><span class="chip ${parseFloat(d)>0?'chip-pos':'chip-neg'}">${s}${d}%</span></td>
+    </tr>`;
+  }).join('');
+
+  // Scores
+  const scores=computeScores(suppliers,totBySupp);
+  const ranked=suppliers.map((s,i)=>({
+    s,total:totBySupp[i],
+    deliv:bids.filter(b=>b.Supplier===s).reduce((a,b)=>a+b.Delivery_Days,0)/bids.filter(b=>b.Supplier===s).length,
+    score:scores[s]
+  })).sort((a,b)=>b.score-a.score);
+
+  id('rankTable').innerHTML=ranked.map((r,i)=>`<tr>
+    <td><span class="rank-badge ${['r1','r2','r3','rn','rn'][i]||'rn'}">${i+1}</span></td>
+    <td class="strong">${r.s}</td>
+    <td>£${r.total.toLocaleString()}</td>
+    <td>${r.deliv.toFixed(1)}d</td>
+    <td style="min-width:110px">
+      <div class="score-row">
+        <div class="score-track"><div class="score-fill" style="width:${Math.round(r.score)}%;background:${PAL[i%PAL.length]}"></div></div>
+        <span class="score-num">${Math.round(r.score)}</span>
+      </div>
+    </td>
+  </tr>`).join('');
+
+  id('evalScores').innerHTML=ranked.map((r,i)=>`<div class="score-card ${i===0?'winner':''}">
+    ${i===0?'<div class="crown">👑</div>':''}
+    <div class="sc-label">${r.s.split(' ')[0]}</div>
+    <div class="sc-score ${i===0?'top':'reg'}">${Math.round(r.score)}</div>
+    <div class="sc-unit">/ 100</div>
+  </div>`).join('');
+
+  // Alts
+  const origAvg={};
+  products.forEach(p=>{const os=bids.filter(b=>b.Product===p&&b.Proposal_Type==='Original');if(os.length)origAvg[p]=os.reduce((a,b)=>a+b.Unit_Price,0)/os.length});
+  const alts=bids.filter(b=>b.Proposal_Type==='Alternate');
+  id('altProposals').innerHTML=!alts.length
+    ?'<p style="text-align:center;padding:2rem;color:var(--text-3);font-size:13px">No alternate proposals found</p>'
+    :`<table><thead><tr><th>Supplier</th><th>Product</th><th>Unit Price</th><th>vs Original</th></tr></thead><tbody>`
+    +alts.map(b=>{const base=origAvg[b.Product]||b.Unit_Price;const p=((b.Unit_Price-base)/base*100).toFixed(1);const s=p>0?'+':'';
+      return`<tr><td class="strong">${b.Supplier}</td><td>${b.Product}</td><td>£${b.Unit_Price.toFixed(2)}</td><td><span class="chip ${parseFloat(p)>0?'chip-pos':'chip-neg'}">${s}${p}%</span></td></tr>`
+    }).join('')+'</tbody></table>';
+
+  id('ts').textContent=new Date().toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+}
+
+function computeScores(suppliers,totBySupp){
+  const data=suppliers.map((s,i)=>({s,total:totBySupp[i],
+    deliv:bids.filter(b=>b.Supplier===s).reduce((a,b)=>a+b.Delivery_Days,0)/bids.filter(b=>b.Supplier===s).length,
+    qty:bids.filter(b=>b.Supplier===s).reduce((a,b)=>a+b.Quantity,0)/bids.filter(b=>b.Supplier===s).length,
+    orig:bids.filter(b=>b.Supplier===s).filter(b=>b.Proposal_Type==='Original').length/bids.filter(b=>b.Supplier===s).length
+  }));
+  const maxT=Math.max(...data.map(d=>d.total)),minT=Math.min(...data.map(d=>d.total));
+  const maxD=Math.max(...data.map(d=>d.deliv)),minD=Math.min(...data.map(d=>d.deliv));
+  const maxQ=Math.max(...data.map(d=>d.qty));
+  const res={};
+  data.forEach(d=>{
+    const p=maxT===minT?100:((maxT-d.total)/(maxT-minT))*100;
+    const dv=maxD===minD?100:((maxD-d.deliv)/(maxD-minD))*100;
+    const q=maxQ>0?(d.qty/maxQ)*100:100;
+    res[d.s]=p*0.4+dv*0.25+q*0.2+d.orig*100*0.15;
+  });
+  return res;
+}
+
+function drawCost(suppliers,totals){
+  const canvas=id('costChart');
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||600,H=230;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const pad={t:20,r:10,b:52,l:72};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const max=Math.max(...totals)*1.18;
+  const bW=Math.min(cW/suppliers.length*0.55,52);
+  const gap=cW/suppliers.length;
+  let p=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<=4;i++){
+      const y=pad.t+cH*(1-i/4);
+      ctx.strokeStyle='rgba(0,0,0,0.06)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cW,y);ctx.stroke();
+      ctx.fillStyle='#B8AEC8';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='right';
+      ctx.fillText('£'+Math.round(max*i/4).toLocaleString(),pad.l-8,y+4);
+    }
+    suppliers.forEach((s,i)=>{
+      const x=pad.l+gap*i+gap/2-bW/2;
+      const bH=(totals[i]/max)*cH*p;
+      const y=pad.t+cH-bH;
+      const c=PAL[i%PAL.length];
+      const gr=ctx.createLinearGradient(0,y,0,pad.t+cH);
+      gr.addColorStop(0,c);gr.addColorStop(1,c+'44');
+      ctx.fillStyle=gr;
+      const r=6;
+      ctx.beginPath();
+      ctx.moveTo(x+r,y);ctx.lineTo(x+bW-r,y);
+      ctx.quadraticCurveTo(x+bW,y,x+bW,y+r);
+      ctx.lineTo(x+bW,pad.t+cH);ctx.lineTo(x,pad.t+cH);ctx.lineTo(x,y+r);
+      ctx.quadraticCurveTo(x,y,x+r,y);
+      ctx.closePath();ctx.fill();
+      ctx.fillStyle='#8B7FA8';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='center';
+      ctx.fillText(s.split(' ')[0],x+bW/2,pad.t+cH+16);
+      if(p>=0.98){ctx.fillStyle=c;ctx.font='bold 11px DM Sans,sans-serif';ctx.fillText('£'+totals[i].toLocaleString(),x+bW/2,y-7);}
+    });
+    if(p<1){p=Math.min(1,p+0.05);requestAnimationFrame(frame);}
+  }
+  frame();
+}
+
+function drawDeliv(suppliers){
+  const canvas=id('delivChart');
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||400,H=230;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const avgD=suppliers.map(s=>{const it=bids.filter(b=>b.Supplier===s);return it.reduce((a,b)=>a+b.Delivery_Days,0)/it.length});
+  const pad={t:10,r:52,b:10,l:92};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const max=Math.max(...avgD)*1.25;
+  const bH=Math.min(cH/suppliers.length*0.55,26);
+  const gap=cH/suppliers.length;
+  let p=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    suppliers.forEach((s,i)=>{
+      const y=pad.t+gap*i+gap/2-bH/2;
+      const w=(avgD[i]/max)*cW*p;
+      const c=PAL[i%PAL.length];
+      ctx.fillStyle='rgba(0,0,0,0.04)';ctx.beginPath();ctx.roundRect(pad.l,y,cW,bH,bH/2);ctx.fill();
+      const gr=ctx.createLinearGradient(pad.l,0,pad.l+cW,0);
+      gr.addColorStop(0,c);gr.addColorStop(1,c+'66');
+      ctx.fillStyle=gr;ctx.beginPath();ctx.roundRect(pad.l,y,Math.max(w,bH/2),bH,bH/2);ctx.fill();
+      ctx.fillStyle='#4A4458';ctx.font='600 11px DM Sans,sans-serif';ctx.textAlign='right';
+      ctx.fillText(s.split(' ')[0],pad.l-8,y+bH/2+4);
+      if(p>=0.98){ctx.fillStyle=c;ctx.font='bold 11px DM Sans,sans-serif';ctx.textAlign='left';ctx.fillText(avgD[i].toFixed(1)+'d',pad.l+w+7,y+bH/2+4);}
+    });
+    if(p<1){p=Math.min(1,p+0.05);requestAnimationFrame(frame);}
+  }
+  frame();
+}
+
+function drawHeatmap(products,suppliers){
+  const lW=110;
+  const cols=`${lW}px ${'1fr '.repeat(suppliers.length).trim()}`;
+  let html=`<div style="display:grid;grid-template-columns:${cols};gap:5px;margin-bottom:6px"><div></div>`;
+  suppliers.forEach(s=>html+=`<div style="text-align:center;font-size:10px;font-weight:600;color:var(--text-3);letter-spacing:.04em">${s.split(' ')[0]}</div>`);
+  html+='</div>';
+  products.forEach(p=>{
+    const prices=suppliers.map(s=>{const m=bids.find(b=>b.Supplier===s&&b.Product===p);return m?m.Unit_Price:null});
+    const valid=prices.filter(v=>v!==null);
+    const minP=Math.min(...valid),maxP=Math.max(...valid);
+    html+=`<div class="hm-row" style="display:grid;grid-template-columns:${cols};gap:5px;margin-bottom:5px">`;
+    html+=`<div class="hm-label">${p}</div>`;
+    prices.forEach((price,i)=>{
+      if(price===null){html+=`<div class="hm-cell" style="background:#F8F9FA;color:#CBD5E1">—</div>`;return;}
+      const n=maxP===minP?0.5:(price-minP)/(maxP-minP);
+      const r=Math.round(255*n+14*(1-n)),g=Math.round(101*n+165*(1-n)),bv=Math.round(64*n+233*(1-n));
+      const bright=(r*299+g*587+bv*114)/1000;
+      const tc=bright>155?'#1A1523':'#FFFFFF';
+      html+=`<div class="hm-cell" style="background:rgb(${r},${g},${bv});color:${tc}">£${price.toFixed(2)}</div>`;
+    });
+    html+='</div>';
+  });
+  id('heatmap').innerHTML=html;
+}
+
+function animN(elId,start,end,pre='',suf='',isFloat=false){
+  const el=id(elId);const dur=1100;const t0=performance.now();
+  (function step(now){
+    const t=Math.min((now-t0)/dur,1);const e=1-Math.pow(1-t,3);const v=start+(end-start)*e;
+    el.textContent=pre+(isFloat?v.toFixed(2):Math.round(v).toLocaleString())+suf;
+    if(t<1)requestAnimationFrame(step);
+  })(t0);
+}
+
+function toast(msg){
+  const el=id('notif');id('notif-msg').textContent=msg;
+  el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+function exportReport(){
+  if(!bids.length){toast('Load a CSV file first');return;}
+  const h=Object.keys(bids[0]);
+  const csv=[h.join(','),...bids.map(b=>h.map(k=>b[k]).join(','))].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='BIDX-Report-'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();toast('Report exported successfully');
+}
+
+function id(x){return document.getElementById(x)}
+id('ts').textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+</script>
+</body>
+</html>
