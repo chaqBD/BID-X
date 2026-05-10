@@ -249,9 +249,9 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
   <div class="header-right">
     <div class="pill-live"><div class="pulse-dot"></div>Live Analysis</div>
     <button class="btn btn-ghost" onclick="exportReport()">&#8595; Export</button>
-    <button class="btn btn-primary" onclick="g('fi').click()">&#8593; Upload CSV</button>
+    <button class="btn btn-primary" onclick="g('fi').click()">&#8593; Upload file</button>
   </div>
-  <input type="file" id="fi" accept=".csv" style="display:none" onchange="handleFile(event)">
+  <input type="file" id="fi" accept="*/*" style="display:none" onchange="handleFile(event)">
 </header>
 
 <main>
@@ -262,7 +262,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
        ondragover="doDrag(event,true)" ondragleave="doDrag(event,false)" ondrop="doDrop(event)">
     <span class="upload-emoji">&#128203;</span>
     <div class="upload-title">Drop your bid file here</div>
-    <p class="upload-sub">Upload a CSV with: <strong>Bid_ID, Supplier, Category, Product, Quantity, Unit_Price, Total_Amount, Delivery_Days, Proposal_Type</strong></p>
+    <p class="upload-sub">Upload a spreadsheet or delimited file with: <strong>Bid_ID, Supplier, Category, Product, Quantity, Unit_Price, Total_Amount, Delivery_Days, Proposal_Type</strong></p>
     <button class="btn btn-primary" style="pointer-events:none;margin:0 auto">Choose File</button>
     <br>
     <button class="sample-link" onclick="event.stopPropagation();loadSample()">&#8627; Try with sample procurement data</button>
@@ -1037,7 +1037,7 @@ function animNF(elId,start,end,pre){
 
 /* ── EXPORT ── */
 function exportReport(){
-  if(!bids.length){toast('Load a CSV file first');return;}
+  if(!bids.length){toast('Load a file first');return;}
   const h=Object.keys(bids[0]);
   const csv=[h.join(','),...bids.map(b=>h.map(k=>b[k]).join(','))].join('\n');
   const a=document.createElement('a');

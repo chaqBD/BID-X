@@ -83,6 +83,33 @@ def parse_df(df: pd.DataFrame, col_map: dict) -> list:
     return [r for r in records if r["Supplier"] not in ("Unknown", "", "nan")]
 
 
+def read_csv_content(content: bytes) -> pd.DataFrame:
+    text = content.decode("utf-8-sig", errors="replace")
+    return pd.read_csv(io.StringIO(text))
+
+
+def read_any_table_file(f) -> pd.DataFrame:
+    filename = f.filename or ""
+    content = f.read()
+    ext = os.path.splitext(filename.lower())[1]
+
+    if ext in {".xls", ".xlsx", ".xlsm", ".xlsb", ".ods"}:
+        return pd.read_excel(io.BytesIO(content))
+
+    if ext == ".csv" or not ext:
+        return read_csv_content(content)
+
+    try:
+        return read_csv_content(content)
+    except Exception as csv_exc:
+        try:
+            return pd.read_excel(io.BytesIO(content))
+        except Exception as excel_exc:
+            raise ValueError(
+                f"Could not parse file as CSV or Excel. CSV error: {csv_exc}; Excel error: {excel_exc}"
+            ) from excel_exc
+
+
 # ── Routes ───────────────────────────────────────────────────────────────────
 @app.route("/")
 def index():
@@ -95,15 +122,11 @@ def upload():
         return jsonify({"error": "No file provided"}), 400
 
     f = request.files["file"]
-    if not f.filename.lower().endswith(".csv"):
-        return jsonify({"error": "Only CSV files are supported"}), 400
-
-    content = f.read().decode("utf-8-sig", errors="replace")
 
     try:
-        df = pd.read_csv(io.StringIO(content))
+        df = read_any_table_file(f)
     except Exception as exc:
-        return jsonify({"error": f"Could not parse CSV: {exc}"}), 400
+        return jsonify({"error": f"Could not parse file: {exc}"}), 400
 
     df.dropna(how="all", inplace=True)
     col_map = detect_columns(df)
