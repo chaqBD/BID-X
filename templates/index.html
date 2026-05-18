@@ -853,7 +853,7 @@ function parseQcsRows(rows){
       if(s.includes('Project Name')&&!s.includes('Bidder')){const nxt=rows[i][j+1];if(nxt)proj.name=proj.name||String(nxt).trim();}
       if(s.includes('Job Site')&&!s.includes('Bidder')){const nxt=rows[i][j+1];if(nxt)proj.site=proj.site||String(nxt).trim();}
       if(s.includes('Engineering')&&!s.includes(':')){for(let k=j+1;k<Math.min(j+4,rows[i].length);k++){if(rows[i][k]&&!String(rows[i][k]).includes('Engineering')){proj.engineering=proj.engineering||String(rows[i][k]).trim();break;}}}
-      if(s.includes('BID DUE')){for(let k=j+1;k<Math.min(j+8,rows[i].length);k++){const v=rows[i][k];if(v&&String(v).trim()&&String(v).trim()!=='-'){proj.bid_due=proj.bid_due||String(v).trim();break;}}}
+      if(s.includes('BID DUE')&&i<20){for(let k=j+1;k<Math.min(j+8,rows[i].length);k++){const v=rows[i][k];const vs=v!=null?String(v).trim():'';if(vs&&vs!=='-'&&vs.length<40&&!vs.toLowerCase().includes('column')&&!vs.toLowerCase().includes('combination')){proj.bid_due=proj.bid_due||vs;break;}}}
     });
   }
 
@@ -1098,7 +1098,35 @@ function showQcsMenu(fname){
   g('fileMeta').textContent=nb+' bidders  |  '+ni+' line items  |  QCS Format';
   g('dashLayout').style.display='block';
   renderQcsProjCard();
+  renderQcsPreview();
   toast('QCS file loaded — '+nb+' bidders, '+ni+' line items');
+}
+
+function renderQcsPreview(){
+  const items=qcsData.line_items.slice(0,10);
+  const bs=qcsData.bidders;
+  if(!items.length){g('preview-badge').textContent='No line items';return;}
+  // Show up to 4 bidders in the preview to keep it readable
+  const showBidders=bs.slice(0,Math.min(4,bs.length));
+  g('preview-badge').textContent='Showing first '+items.length+' of '+qcsData.line_items.length+' line items';
+  g('previewHead').innerHTML='<tr><th>Description</th><th>Section</th><th>Qty</th><th>Unit</th>'+
+    showBidders.map(b=>`<th>${b.name}</th>`).join('')+
+    (bs.length>4?`<th style="color:var(--text-3);font-style:italic">+ ${bs.length-4} more</th>`:'')+
+    '</tr>';
+  g('previewBody').innerHTML=items.map(it=>{
+    const sec=(it.section||'').replace('Pricing for ','').replace('Equipment/ ','');
+    return`<tr>
+      <td class="strong" style="max-width:280px;white-space:normal;font-size:12px">${it.description}</td>
+      <td style="color:var(--text-3);font-size:11px;max-width:130px;white-space:normal">${sec}</td>
+      <td style="color:var(--text-3)">${it.qty!=null?it.qty.toLocaleString():'—'}</td>
+      <td style="color:var(--text-3)">${it.unit||'—'}</td>
+      ${showBidders.map(b=>{
+        const p=it.prices[String(b.num)];
+        return`<td style="color:${p?'var(--text-2)':'var(--text-3)'};font-weight:${p?600:400}">${p?('$'+p.toFixed(2)):'—'}</td>`;
+      }).join('')}
+      ${bs.length>4?'<td></td>':''}
+    </tr>`;
+  }).join('');
 }
 
 function renderPreview(){
