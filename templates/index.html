@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BID-X — Procurement Intelligence</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 :root {
   --bg:#FEFAF5;--bg2:#FFF8EF;--surface:#FFFFFF;
@@ -743,52 +744,272 @@ function parseCSV(t){
   }).filter(r=>r.Supplier);
 }
 
-/* upload via Python API, fallback to client-side parse */
-async function uploadToAPI(file){
-  const fd=new FormData();fd.append('file',file);
-  const res=await fetch('/api/upload',{method:'POST',body:fd});
-  if(res.status===422){
-    const d=await res.json();
-    showColumnMapper(d,file);
+/* ── Client-side file parsing (no server API needed) ── */
+
+const EXCEL_EXTS=new Set(['.xlsx','.xlsm','.xlsb','.xls','.ods']);
+
+function extOf(fname){return(fname.match(/\.[^.]+$/)||[''])[0].toLowerCase();}
+
+/* Generic column aliases */
+const COL_ALIASES={
+  Bid_ID:['bid_id','bid id','bidid','id','ref','reference','quote_id','rfq','tender_id'],
+  Supplier:['supplier','vendor','company','bidder','contractor','supplier_name','vendor_name','firm'],
+  Category:['category','cat','type','group','division','department','commodity'],
+  Product:['product','item','description','material','goods','service','item_description','product_name'],
+  Quantity:['quantity','qty','units','volume','count','amount','no_of_units','num'],
+  Unit_Price:['unit_price','unit price','price','rate','cost','unit_cost','per_unit','unitprice','unit rate'],
+  Total_Amount:['total_amount','total amount','total','total_cost','grand_total','subtotal','line_total','ext_price'],
+  Delivery_Days:['delivery_days','delivery days','delivery','lead_time','leadtime','days','turnaround','ship_days','eta_days'],
+  Proposal_Type:['proposal_type','proposal type','bid_type','proposal','type','quote_type'],
+};
+
+function normKey(s){return s.trim().toLowerCase().replace(/[\s_\-]+/g,'_');}
+
+function detectColumns(headers){
+  const normH={};headers.forEach(h=>{normH[normKey(h)]=h;});
+  const map={};
+  for(const[field,aliases]of Object.entries(COL_ALIASES)){
+    for(const a of aliases){if(normH[normKey(a)]){map[field]=normH[normKey(a)];break;}}
+  }
+  return map;
+}
+
+function cleanNum(v){
+  if(v===null||v===undefined)return 0;
+  if(typeof v==='number')return v;
+  return parseFloat(String(v).replace(/[£$,\s]/g,''))||0;
+}
+
+function recordsFromRows(jsonRows){
+  if(!jsonRows.length)return[];
+  const headers=Object.keys(jsonRows[0]);
+  const map=detectColumns(headers);
+  if(!map.Supplier&&!map.Product)return null; // needs column mapper
+  return jsonRows.map((row,i)=>{
+    const get=(f,def='')=>map[f]?row[map[f]]??def:def;
+    const up=cleanNum(get('Unit_Price',0));
+    const qty=cleanNum(get('Quantity',1))||1;
+    const ta=cleanNum(get('Total_Amount',0))||(up*qty);
+    return{
+      Bid_ID:String(get('Bid_ID',`BID${String(i+1).padStart(3,'0')}`))||`BID${String(i+1).padStart(3,'0')}`,
+      Supplier:String(get('Supplier','Unknown')),
+      Category:String(get('Category','General')),
+      Product:String(get('Product',`Item ${i+1}`)),
+      Quantity:qty,Unit_Price:up,Total_Amount:ta,
+      Delivery_Days:parseInt(get('Delivery_Days',0))||0,
+      Proposal_Type:String(get('Proposal_Type','Original')).trim()||'Original',
+    };
+  }).filter(r=>r.Supplier&&r.Supplier!=='Unknown'&&r.Supplier!=='nan');
+}
+
+/* ── QCS parsing (ported from Python backend) ── */
+function cleanPrice(v){
+  if(v===null||v===undefined)return null;
+  if(typeof v==='number')return v!==0?v:null;
+  const s=String(v).replace(/[,$\s]/g,'');const f=parseFloat(s);
+  return(!isNaN(f)&&f!==0)?f:null;
+}
+
+function isQcs(rows){
+  for(let i=0;i<Math.min(35,rows.length);i++)
+    for(const c of rows[i])
+      if(c&&(String(c).includes('QUOTE COMPARISON SHEET')||String(c).includes('TOTAL PROPOSAL PRICE')))return true;
+  return false;
+}
+
+function parseQcsRows(rows){
+  const findRow=(text,maxR=80)=>{
+    for(let i=0;i<Math.min(maxR,rows.length);i++)
+      if(rows[i].some(c=>c!==null&&String(c).includes(text)))return i;
     return null;
-  }
-  const d=await res.json();
-  if(d.error){toast('Error: '+d.error);return null;}
-  // QCS format detected by backend
-  if(d.type==='qcs'){
-    qcsData=d;
-    return {mode:'qcs'};
-  }
-  // Generic format
-  if(d.unmatched_cols&&d.unmatched_cols.length)
-    toast('Note: '+d.unmatched_cols.length+' column(s) not recognised — ignored');
-  return {mode:'generic',records:d.records};
-}
+  };
+  const rBidder=findRow('BIDDER 1'),rLegal=findRow('Bidder Legal Name'),
+        rBiddate=findRow('Bid Date or'),rValid=findRow('Bid Valid Until Date'),
+        rValdays=findRow('Bid Validity Duration'),rType=findRow('Firm or Budgetary'),
+        rTotal=findRow('TOTAL PROPOSAL PRICE'),rPb=findRow('Pricing Breakdown'),
+        rTeval=findRow('TOTAL EVALUATED PRICE');
 
-function _handleResult(result,fname){
-  if(!result)return;
-  if(result.mode==='qcs'){showQcsMenu(fname);}
-  else{bids=result.records;showMenu(fname);}
-}
-
-function handleFile(e){
-  const f=e.target.files[0];if(!f)return;
-  uploadToAPI(f).then(r=>_handleResult(r,f.name)).catch(()=>{
-    const r=new FileReader();
-    r.onload=ev=>{bids=parseCSV(ev.target.result);showMenu(f.name);};
-    r.readAsText(f);
+  /* Bidder column positions */
+  const bidderStart={};
+  if(rBidder!==null)rows[rBidder].forEach((c,j)=>{
+    if(c){const m=/BIDDER\s*(\d+)/.exec(String(c));if(m&&!bidderStart[+m[1]])bidderStart[+m[1]]=j;}
   });
+  const numBidders=Object.keys(bidderStart).length;
+
+  /* Unit/Total price column positions */
+  let upCols=[],tpCols=[];
+  if(rPb!==null){
+    for(let off=1;off<=4;off++){
+      const idx=rPb+off;if(idx>=rows.length)break;
+      const row=rows[idx];const fu=[],ft=[];
+      row.forEach((c,j)=>{if(c){const s=String(c);if(s.includes('Unit Price'))fu.push(j);if(s.includes('Total Price'))ft.push(j);}});
+      if(fu.length&&ft.length){upCols=fu.sort((a,b)=>a-b);tpCols=ft.sort((a,b)=>a-b);break;}
+    }
+  }
+  if(!upCols.length&&numBidders)
+    Object.keys(bidderStart).map(Number).sort((a,b)=>a-b).forEach(n=>{upCols.push(bidderStart[n]);tpCols.push(bidderStart[n]+2);});
+
+  /* Helper: pick first non-empty value near each UP column */
+  const perBidder=(rowIdx,cols,cvt)=>{
+    const res={};if(rowIdx===null||rowIdx>=rows.length)return res;
+    const row=rows[rowIdx];
+    cols.forEach((col,i)=>{
+      let val=null;
+      for(let off=-1;off<5;off++){
+        const c=col+off;
+        if(c>=0&&c<row.length&&row[c]!==null){const s=String(row[c]).trim();if(s&&s!=='null'&&s!=='-'){val=row[c];break;}}
+      }
+      if(cvt&&val!==null){try{val=cvt(val);}catch(e){val=null;}}
+      res[i+1]=val;
+    });
+    return res;
+  };
+  const strVal=v=>{if(!v)return null;const s=String(v).trim();return(s&&s!=='null'&&s!=='-')?s:null;};
+  const intVal=v=>{if(!v)return null;const n=parseInt(v);return isNaN(n)?null:n;};
+
+  /* Project metadata */
+  const proj={};
+  for(let i=0;i<Math.min(35,rows.length);i++){
+    rows[i].forEach((c,j)=>{
+      if(!c)return;const s=String(c);
+      if(s.includes('Project Name')&&!s.includes('Bidder')){const nxt=rows[i][j+1];if(nxt)proj.name=proj.name||String(nxt).trim();}
+      if(s.includes('Job Site')&&!s.includes('Bidder')){const nxt=rows[i][j+1];if(nxt)proj.site=proj.site||String(nxt).trim();}
+      if(s.includes('Engineering')&&!s.includes(':')){for(let k=j+1;k<Math.min(j+4,rows[i].length);k++){if(rows[i][k]&&!String(rows[i][k]).includes('Engineering')){proj.engineering=proj.engineering||String(rows[i][k]).trim();break;}}}
+      if(s.includes('BID DUE')){for(let k=j+1;k<Math.min(j+8,rows[i].length);k++){const v=rows[i][k];if(v&&String(v).trim()&&String(v).trim()!=='-'){proj.bid_due=proj.bid_due||String(v).trim();break;}}}
+    });
+  }
+
+  /* Bidder names */
+  const names={};
+  if(rLegal!==null&&upCols.length){
+    const row=rows[rLegal];
+    upCols.forEach((col,i)=>{
+      for(let off=-1;off<6;off++){
+        const c=col+off;
+        if(c>=0&&c<row.length&&row[c]!==null){
+          const s=String(row[c]).trim();
+          if(s&&s!=='null'&&s!=='-'&&!s.startsWith('$')&&!/^[\d,\.]+$/.test(s)&&!s.includes('Bidder Legal')){names[i+1]=s;break;}
+        }
+      }
+    });
+  }
+
+  const bidDates=perBidder(rBiddate,upCols,strVal),bidValid=perBidder(rValid,upCols,strVal),
+        validDays=perBidder(rValdays,upCols,intVal),bidTypes=perBidder(rType,upCols,strVal);
+
+  /* Total proposal prices */
+  const totalsMap={};
+  if(rTotal!==null){
+    const row=rows[rTotal];
+    upCols.forEach((col,i)=>{
+      for(const c of[col,col+1,col+2,col-1]){
+        if(c>=0&&c<row.length){const p=cleanPrice(row[c]);if(p&&p>100000){totalsMap[i+1]=p;break;}}
+      }
+    });
+  }
+
+  /* Line items */
+  const UNITS=new Set(['LF','LOT','DAY','RT','EA','FT','LB','KG','TON','EACH']);
+  const SKIP=['Pricing for','Commercial Adjustments','Technical Adjustments','TOTAL UNIT PRICE',
+    'Security Cost Per','Kiewit Evaluation','Pricing Reliability','Total Proposal Price',
+    'Amount above minimum','Percent above','Awarding','Technically Acceptable',
+    'Commercially Acceptable','Price Carried','Alternate Price','IMPORTANT:','Options Excluded',
+    'Financial Security','Warranty','Shop Details','Shipping','Lead Time',
+    'Bidder Certification','Insurance','Proposal Exception','Progress Payment'];
+  const lineItems=[];let section='General';
+
+  if(rPb!==null&&upCols.length){
+    const dataStart=rPb+2,dataEnd=rTeval!==null?rTeval:rows.length;
+    for(let i=dataStart;i<dataEnd;i++){
+      const row=rows[i];
+      if(!row.some(c=>c!==null))continue;
+      const rt=row.filter(c=>c!==null).map(c=>String(c)).join(' ');
+      if(SKIP.some(kw=>rt.includes(kw))){
+        if(rt.includes('Pricing for'))for(const c of row){if(c&&String(c).includes('Pricing for')){section=String(c).trim();break;}}
+        continue;
+      }
+      let desc=null,unit=null,qty=null;
+      for(let j=0;j<Math.min(7,row.length);j++){
+        const v=row[j];if(!v)continue;const s=String(v).trim();if(!s||s==='null')continue;
+        if(UNITS.has(s)){unit=s;continue;}
+        if(/^\d{1,4}$/.test(s))continue;
+        if(/^\d[\d,]+$/.test(s)){try{qty=parseFloat(s.replace(',',''));}catch(e){}continue;}
+        if(/^\d+\.\d+\.\d+/.test(s))continue;
+        if(s.startsWith('$'))continue;
+        if(s.length>3&&!desc)desc=s;
+      }
+      if(!desc)continue;
+      if(!unit)for(let j=3;j<Math.min(11,row.length);j++){if(row[j]&&UNITS.has(String(row[j]).trim())){unit=String(row[j]).trim();break;}}
+      if(qty===null)for(let j=2;j<Math.min(10,row.length);j++){if(typeof row[j]==='number'&&row[j]>0){qty=row[j];break;}}
+      const prices={},totals={},defs={};
+      upCols.forEach((uc,bi)=>{
+        const bn=String(bi+1),tc=tpCols[bi];
+        const up=uc<row.length?row[uc]:null,tp=tc<row.length?row[tc]:null;
+        const dc=uc+1;if(dc!==tc&&dc<row.length)defs[bn]=row[dc]?String(row[dc]).trim():null;
+        prices[bn]=cleanPrice(up);totals[bn]=cleanPrice(tp);
+      });
+      if(!Object.values(prices).some(v=>v!==null))continue;
+      lineItems.push({description:desc,section,unit,qty,prices,totals,definitions:defs});
+    }
+  }
+
+  const bidders=[];
+  for(let n=1;n<=numBidders;n++)
+    bidders.push({num:n,name:names[n]||`Bidder ${n}`,bid_date:bidDates[n]||null,
+      bid_valid_until:bidValid[n]||null,validity_days:validDays[n]||null,
+      bid_type:bidTypes[n]||null,total_price:totalsMap[n]||0});
+
+  return{type:'qcs',project:proj,bidders,line_items:lineItems,num_bidders:numBidders};
 }
+
+/* ── Master file handler ── */
+function processFile(file){
+  const fname=file.name,ext=extOf(fname);
+  const reader=new FileReader();
+
+  if(EXCEL_EXTS.has(ext)){
+    reader.onload=ev=>{
+      try{
+        const wb=XLSX.read(ev.target.result,{type:'array',cellDates:true,dense:false});
+        const wsName=wb.SheetNames[0];
+        const ws=wb.Sheets[wsName];
+        // Get raw row/col array for QCS detection
+        const raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});
+        if(isQcs(raw)){
+          qcsData=parseQcsRows(raw);
+          showQcsMenu(fname);
+        }else{
+          // Generic Excel
+          const json=XLSX.utils.sheet_to_json(ws,{defval:''});
+          const records=recordsFromRows(json);
+          if(!records){
+            // Need column mapper — build preview
+            const cols=Object.keys(json[0]||{});
+            showColumnMapper({columns:cols,preview:json.slice(0,3)},{name:fname,_json:json});
+          }else{
+            bids=records;showMenu(fname);
+          }
+        }
+      }catch(e){toast('Could not parse Excel file: '+e.message);}
+    };
+    reader.readAsArrayBuffer(file);
+  }else{
+    // CSV or plain text
+    reader.onload=ev=>{
+      try{
+        const text=ev.target.result;
+        bids=parseCSV(text);
+        if(!bids.length){toast('No recognisable data found in file.');return;}
+        showMenu(fname);
+      }catch(e){toast('Could not parse file: '+e.message);}
+    };
+    reader.readAsText(file);
+  }
+}
+
+function handleFile(e){const f=e.target.files[0];if(f)processFile(f);}
 function doDrag(e,on){e.preventDefault();g('uploadZone').classList.toggle('over',on)}
-function doDrop(e){
-  e.preventDefault();doDrag(e,false);
-  const f=e.dataTransfer.files[0];if(!f)return;
-  uploadToAPI(f).then(r=>_handleResult(r,f.name)).catch(()=>{
-    const r=new FileReader();
-    r.onload=ev=>{bids=parseCSV(ev.target.result);showMenu(f.name);};
-    r.readAsText(f);
-  });
-}
+function doDrop(e){e.preventDefault();doDrag(e,false);const f=e.dataTransfer.files[0];if(f)processFile(f);}
 function loadSample(){bids=parseCSV(SAMPLE);showMenu('sample-procurement-data.csv');}
 
 /* ── Column mapper modal (shown when Python can't auto-detect) ── */
@@ -820,31 +1041,42 @@ function applyColumnMap(){
   ALL_FIELDS.forEach(f=>{const v=g('map_'+f);if(v&&v.value)map[f]=v.value;});
   if(!map.Supplier&&!map.Product){toast('Map at least Supplier or Product');return;}
   g('colModal').style.display='none';
-  // re-read file with custom map
-  const r=new FileReader();
-  r.onload=ev=>{
-    const lines=ev.target.result.trim().split('\n');
-    const hdrs=lines[0].split(',').map(h=>h.trim());
-    bids=lines.slice(1).map((l,i)=>{
-      const vs=l.split(',').map(v=>v.trim());
-      const row={};hdrs.forEach((h,j)=>row[h]=vs[j]||'');
-      const clean=s=>parseFloat(String(s).replace(/[£$,]/g,''))||0;
-      const qty=clean(row[map.Quantity])||1;
-      const up=clean(row[map.Unit_Price]);
-      const ta=clean(row[map.Total_Amount])||up*qty;
-      return{
-        Bid_ID:row[map.Bid_ID]||`BID${i+1}`,
-        Supplier:row[map.Supplier]||'Unknown',
-        Category:row[map.Category]||'General',
-        Product:row[map.Product]||`Item ${i+1}`,
-        Quantity:qty,Unit_Price:up,Total_Amount:ta,
-        Delivery_Days:parseInt(row[map.Delivery_Days])||0,
-        Proposal_Type:row[map.Proposal_Type]||'Original'
-      };
+  // Use cached JSON rows if available (Excel), otherwise re-parse CSV
+  if(_pendingFile&&_pendingFile._json){
+    const json=_pendingFile._json;
+    bids=json.map((row,i)=>{
+      const get=(f,def='')=>map[f]?row[map[f]]??def:def;
+      const up=cleanNum(get('Unit_Price',0));
+      const qty=cleanNum(get('Quantity',1))||1;
+      const ta=cleanNum(get('Total_Amount',0))||(up*qty);
+      return{Bid_ID:String(get('Bid_ID',`BID${i+1}`))||`BID${i+1}`,
+        Supplier:String(get('Supplier','Unknown')),Category:String(get('Category','General')),
+        Product:String(get('Product',`Item ${i+1}`)),Quantity:qty,Unit_Price:up,Total_Amount:ta,
+        Delivery_Days:parseInt(get('Delivery_Days',0))||0,
+        Proposal_Type:String(get('Proposal_Type','Original')).trim()||'Original'};
     }).filter(r=>r.Supplier&&r.Supplier!=='Unknown');
     showMenu(_pendingFile.name);
-  };
-  r.readAsText(_pendingFile);
+  }else{
+    const r=new FileReader();
+    r.onload=ev=>{
+      const lines=ev.target.result.trim().split('\n');
+      const hdrs=lines[0].split(',').map(h=>h.trim());
+      bids=lines.slice(1).map((l,i)=>{
+        const vs=l.split(',').map(v=>v.trim());
+        const row={};hdrs.forEach((h,j)=>row[h]=vs[j]||'');
+        const clean=s=>parseFloat(String(s).replace(/[£$,]/g,''))||0;
+        const qty=clean(row[map.Quantity])||1;const up=clean(row[map.Unit_Price]);
+        const ta=clean(row[map.Total_Amount])||up*qty;
+        return{Bid_ID:row[map.Bid_ID]||`BID${i+1}`,Supplier:row[map.Supplier]||'Unknown',
+          Category:row[map.Category]||'General',Product:row[map.Product]||`Item ${i+1}`,
+          Quantity:qty,Unit_Price:up,Total_Amount:ta,
+          Delivery_Days:parseInt(row[map.Delivery_Days])||0,
+          Proposal_Type:row[map.Proposal_Type]||'Original'};
+      }).filter(r=>r.Supplier&&r.Supplier!=='Unknown');
+      showMenu(_pendingFile.name);
+    };
+    r.readAsText(_pendingFile);
+  }
 }
 
 function showMenu(fname){
