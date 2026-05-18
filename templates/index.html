@@ -228,6 +228,41 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
 
 @media(max-width:960px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.dashboard-layout{flex-direction:column}.sidebar{width:100%;position:static}.ana-btn{display:inline-flex;width:auto;border-bottom:none;border:1.5px solid var(--border2);border-radius:var(--radius-sm);margin:.25rem}.sidebar-actions{flex-direction:row}}
 @media(max-width:640px){.kpi-grid{grid-template-columns:1fr 1fr}main{padding:1rem}header{padding:0 1rem}}
+
+/* ── QCS MODE ── */
+.qcs-badge{display:inline-flex;align-items:center;gap:6px;background:#FEF3C7;color:#92400E;font-size:10px;font-weight:700;padding:4px 10px;border-radius:100px;letter-spacing:.05em;text-transform:uppercase}
+.bidder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.25rem}
+.bidder-card{background:var(--surface);border-radius:var(--radius-sm);border:1.5px solid var(--border2);padding:1.1rem 1.25rem;transition:all .2s;position:relative}
+.bidder-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.bidder-card.lowest-card{border-color:rgba(5,150,105,.3);background:var(--emerald-lt)}
+.bidder-card.budg-card{border-color:rgba(245,158,11,.3);background:var(--amber-lt)}
+.bc-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:100px;letter-spacing:.06em;text-transform:uppercase;display:inline-block;margin-bottom:.5rem}
+.bc-firm{background:var(--emerald-lt);color:var(--emerald)}
+.bc-budg{background:var(--amber-lt);color:#B45309}
+.bc-name{font-family:var(--syne);font-size:14px;font-weight:800;color:var(--text);margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bc-price{font-family:var(--syne);font-size:20px;font-weight:800;letter-spacing:-1px;margin:.35rem 0;color:var(--coral)}
+.bc-price.low{color:var(--emerald)}
+.bc-meta{font-size:11px;color:var(--text-3);line-height:1.7}
+.bc-crown{position:absolute;top:10px;right:12px;font-size:16px}
+.hm-wrap{overflow-x:auto;padding-bottom:4px}
+.qcs-hm{display:grid;gap:3px}
+.qcs-hm-label{font-size:10px;font-weight:500;color:var(--text-2);padding:0 4px;align-self:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qcs-col-hdr{font-size:10px;font-weight:700;color:var(--text-3);text-align:center;letter-spacing:.03em;padding:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qcs-cell{height:30px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;cursor:default;transition:transform .15s;white-space:nowrap}
+.qcs-cell:hover{transform:scale(1.1);z-index:5;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.qcs-cell.na-cell{background:#F1F5F9;color:#CBD5E1;font-size:9px}
+.flag-card{border-radius:var(--radius-sm);border:1.5px solid var(--border2);padding:.9rem 1.1rem;margin-bottom:.7rem;display:flex;align-items:flex-start;gap:11px}
+.flag-card.warn{border-color:rgba(245,158,11,.3);background:var(--amber-lt)}
+.flag-card.danger{border-color:rgba(244,63,94,.3);background:var(--rose-lt)}
+.flag-card.info{border-color:rgba(14,165,233,.3);background:var(--teal-lt)}
+.flag-card.ok{border-color:rgba(5,150,105,.25);background:var(--emerald-lt)}
+.flag-em{font-size:20px;flex-shrink:0;margin-top:1px}
+.flag-ttl{font-weight:700;font-size:13px;color:var(--text);margin-bottom:2px}
+.flag-sub{font-size:12px;color:var(--text-3);line-height:1.5}
+.savings-box{border-radius:var(--radius);padding:1.75rem;text-align:center;margin-bottom:1rem}
+.savings-label{font-size:12px;font-weight:600;color:var(--text-3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:.5rem}
+.savings-val{font-family:var(--syne);font-size:36px;font-weight:800;letter-spacing:-2px}
+.savings-sub{font-size:12px;color:var(--text-3);margin-top:.3rem}
 </style>
 </head>
 <body>
@@ -262,7 +297,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
        ondragover="doDrag(event,true)" ondragleave="doDrag(event,false)" ondrop="doDrop(event)">
     <span class="upload-emoji">&#128203;</span>
     <div class="upload-title">Drop your bid file here</div>
-    <p class="upload-sub">Upload a spreadsheet or delimited file with: <strong>Bid_ID, Supplier, Category, Product, Quantity, Unit_Price, Total_Amount, Delivery_Days, Proposal_Type</strong></p>
+    <p class="upload-sub">Upload a <strong>Quote Comparison Sheet (.xlsm)</strong> for QCS analysis, or any spreadsheet with: <strong>Supplier, Product, Unit_Price, Total_Amount</strong> for generic bid analysis</p>
     <button class="btn btn-primary" style="pointer-events:none;margin:0 auto">Choose File</button>
     <br>
     <button class="sample-link" onclick="event.stopPropagation();loadSample()">&#8627; Try with sample procurement data</button>
@@ -285,47 +320,88 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
       <!-- SIDEBAR -->
       <div class="sidebar">
         <div class="sidebar-hdr">
-          <div class="sidebar-title">Analysis Modules</div>
+          <div class="sidebar-title" id="sidebar-label">Analysis Modules</div>
         </div>
 
-        <button class="ana-btn ana-coral" id="btn-overview" onclick="runAnalysis('overview')">
-          <span class="ana-btn-icon">&#128202;</span>
-          <span class="ana-btn-label">Bid Overview</span>
-          <span class="ana-btn-arrow">›</span>
-        </button>
-        <button class="ana-btn ana-violet" id="btn-unitprice" onclick="runAnalysis('unitprice')">
-          <span class="ana-btn-icon">&#128161;</span>
-          <span class="ana-btn-label">Unit Price Analysis</span>
-          <span class="ana-btn-arrow">›</span>
-        </button>
-        <button class="ana-btn ana-teal" id="btn-totalcost" onclick="runAnalysis('totalcost')">
-          <span class="ana-btn-icon">&#128176;</span>
-          <span class="ana-btn-label">Total Cost Analysis</span>
-          <span class="ana-btn-arrow">›</span>
-        </button>
-        <button class="ana-btn ana-emerald" id="btn-quantity" onclick="runAnalysis('quantity')">
-          <span class="ana-btn-icon">&#128230;</span>
-          <span class="ana-btn-label">Quantity Analysis</span>
-          <span class="ana-btn-arrow">›</span>
-        </button>
-        <button class="ana-btn ana-amber" id="btn-ranking" onclick="runAnalysis('ranking')">
-          <span class="ana-btn-icon">&#127942;</span>
-          <span class="ana-btn-label">Supplier Ranking</span>
-          <span class="ana-btn-arrow">›</span>
-        </button>
-        <button class="ana-btn ana-rose" id="btn-variance" onclick="runAnalysis('variance')">
-          <span class="ana-btn-icon">&#9888;&#65039;</span>
-          <span class="ana-btn-label">Variance Analysis</span>
-          <span class="ana-btn-arrow">›</span>
-        </button>
-        <button class="ana-btn ana-indigo" id="btn-alternate" onclick="runAnalysis('alternate')">
-          <span class="ana-btn-icon">&#128260;</span>
-          <span class="ana-btn-label">Alternate Proposals</span>
-          <span class="ana-btn-arrow">›</span>
-        </button>
+        <!-- Generic mode buttons -->
+        <div id="generic-btns">
+          <button class="ana-btn ana-coral" id="btn-overview" onclick="runAnalysis('overview')">
+            <span class="ana-btn-icon">&#128202;</span>
+            <span class="ana-btn-label">Bid Overview</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+          <button class="ana-btn ana-violet" id="btn-unitprice" onclick="runAnalysis('unitprice')">
+            <span class="ana-btn-icon">&#128161;</span>
+            <span class="ana-btn-label">Unit Price Analysis</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+          <button class="ana-btn ana-teal" id="btn-totalcost" onclick="runAnalysis('totalcost')">
+            <span class="ana-btn-icon">&#128176;</span>
+            <span class="ana-btn-label">Total Cost Analysis</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+          <button class="ana-btn ana-emerald" id="btn-quantity" onclick="runAnalysis('quantity')">
+            <span class="ana-btn-icon">&#128230;</span>
+            <span class="ana-btn-label">Quantity Analysis</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+          <button class="ana-btn ana-amber" id="btn-ranking" onclick="runAnalysis('ranking')">
+            <span class="ana-btn-icon">&#127942;</span>
+            <span class="ana-btn-label">Supplier Ranking</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+          <button class="ana-btn ana-rose" id="btn-variance" onclick="runAnalysis('variance')">
+            <span class="ana-btn-icon">&#9888;&#65039;</span>
+            <span class="ana-btn-label">Variance Analysis</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+          <button class="ana-btn ana-indigo" id="btn-alternate" onclick="runAnalysis('alternate')">
+            <span class="ana-btn-icon">&#128260;</span>
+            <span class="ana-btn-label">Alternate Proposals</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+        </div>
 
-        <div class="sidebar-actions">
+        <!-- QCS mode buttons -->
+        <div id="qcs-btns" style="display:none">
+          <button class="ana-btn ana-coral" id="qbtn-summary" onclick="runQcsAnalysis('summary')">
+            <span class="ana-btn-icon">&#128101;</span>
+            <span class="ana-btn-label">Bidder Summary</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+          <button class="ana-btn ana-emerald" id="qbtn-ranking" onclick="runQcsAnalysis('ranking')">
+            <span class="ana-btn-icon">&#127942;</span>
+            <span class="ana-btn-label">Price Ranking</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+          <button class="ana-btn ana-violet" id="qbtn-heatmap" onclick="runQcsAnalysis('heatmap')">
+            <span class="ana-btn-icon">&#128200;</span>
+            <span class="ana-btn-label">Line Item Heatmap</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+          <button class="ana-btn ana-teal" id="qbtn-lowest" onclick="runQcsAnalysis('lowest')">
+            <span class="ana-btn-icon">&#128203;</span>
+            <span class="ana-btn-label">Lowest Per Item</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+          <button class="ana-btn ana-amber" id="qbtn-savings" onclick="runQcsAnalysis('savings')">
+            <span class="ana-btn-icon">&#128181;</span>
+            <span class="ana-btn-label">Savings Analysis</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+          <button class="ana-btn ana-rose" id="qbtn-flags" onclick="runQcsAnalysis('flags')">
+            <span class="ana-btn-icon">&#9888;&#65039;</span>
+            <span class="ana-btn-label">Risk Flags</span>
+            <span class="ana-btn-arrow">›</span>
+          </button>
+        </div>
+
+        <div class="sidebar-actions" id="generic-actions">
           <button class="btn-run-all" onclick="runAll()">&#9654; Run All</button>
+          <button class="btn-reset" onclick="resetDash()">&#8635; Reset</button>
+        </div>
+        <div class="sidebar-actions" id="qcs-actions" style="display:none">
+          <button class="btn-run-all" onclick="runQcsAll()">&#9654; Run All</button>
           <button class="btn-reset" onclick="resetDash()">&#8635; Reset</button>
         </div>
       </div>
@@ -476,6 +552,125 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
           </div>
         </div>
 
+        <!-- QCS CONTENT (shown only in QCS mode) -->
+        <div id="qcs-content" style="display:none">
+
+          <!-- QCS project header card -->
+          <div class="preview-card" id="qcs-proj-card">
+            <div class="sec-hdr">
+              <div class="sec-title">&#128196; Quote Comparison Sheet</div>
+              <span class="qcs-badge">&#128203; QCS Mode</span>
+            </div>
+            <div id="qcs-proj-info" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;font-size:13px"></div>
+          </div>
+
+          <!-- QCS-1: Bidder Summary -->
+          <div class="panel" id="qcs-panel-summary">
+            <div class="card full">
+              <div class="sec-hdr">
+                <div class="sec-title">&#128101; Bidder Summary</div>
+                <div class="sec-badge" id="qbadge-summary" style="background:var(--coral-lt);color:var(--coral)"></div>
+              </div>
+              <div class="bidder-grid" id="qcs-bidder-cards"></div>
+              <div class="table-wrap">
+                <table><thead><tr><th>#</th><th>Bidder</th><th>Bid Type</th><th>Bid Date</th><th>Valid Until</th><th>Validity</th><th>Total Proposal Price</th><th>vs Lowest</th></tr></thead>
+                <tbody id="qcs-bidder-table"></tbody></table>
+              </div>
+            </div>
+          </div>
+
+          <!-- QCS-2: Price Ranking -->
+          <div class="panel" id="qcs-panel-ranking">
+            <div class="two-col">
+              <div class="card">
+                <div class="sec-hdr"><div class="sec-title">&#127942; Total Price Ranking</div></div>
+                <canvas id="qcs-rank-chart" height="260"></canvas>
+              </div>
+              <div class="card">
+                <div class="sec-hdr"><div class="sec-title">&#128201; Price Comparison Table</div></div>
+                <div class="table-wrap">
+                  <table><thead><tr><th>Rank</th><th>Bidder</th><th>Type</th><th>Total Price</th><th>vs Lowest</th></tr></thead>
+                  <tbody id="qcs-rank-table"></tbody></table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QCS-3: Line Item Heatmap -->
+          <div class="panel" id="qcs-panel-heatmap">
+            <div class="card full">
+              <div class="sec-hdr">
+                <div class="sec-title">&#128200; Unit Price Heatmap — Line Items × Bidders</div>
+                <div class="sec-badge" style="background:var(--violet-lt);color:var(--violet)">Green = cheapest &nbsp;&#183;&nbsp; Red = most expensive per item</div>
+              </div>
+              <div class="hm-wrap" id="qcs-heatmap-wrap"></div>
+            </div>
+          </div>
+
+          <!-- QCS-4: Lowest Per Item -->
+          <div class="panel" id="qcs-panel-lowest">
+            <div class="card full">
+              <div class="sec-hdr">
+                <div class="sec-title">&#128203; Lowest Price Per Line Item</div>
+                <div class="sec-badge" id="qbadge-lowest" style="background:var(--teal-lt);color:var(--teal)"></div>
+              </div>
+              <div class="table-wrap">
+                <table><thead><tr><th>Item</th><th>Section</th><th>Qty</th><th>Unit</th><th>Lowest Unit Price</th><th>Best Bidder</th><th>Highest Price</th><th>Spread %</th></tr></thead>
+                <tbody id="qcs-lowest-table"></tbody></table>
+              </div>
+            </div>
+          </div>
+
+          <!-- QCS-5: Savings Analysis -->
+          <div class="panel" id="qcs-panel-savings">
+            <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+              <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--emerald-lt)">&#128201;</div>
+                <div class="kpi-label">Best Single Supplier</div>
+                <div class="kpi-value" id="qs-best" style="color:var(--emerald);font-size:26px">-</div>
+                <div class="kpi-sub" id="qs-best-name"></div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--violet-lt)">&#127919;</div>
+                <div class="kpi-label">Cherry-Pick Minimum</div>
+                <div class="kpi-value" id="qs-cherry" style="color:var(--violet);font-size:26px">-</div>
+                <div class="kpi-sub">Theoretical best (multi-supplier)</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--amber-lt)">&#128181;</div>
+                <div class="kpi-label">Potential Savings</div>
+                <div class="kpi-value" id="qs-save" style="color:var(--amber);font-size:26px">-</div>
+                <div class="kpi-sub" id="qs-save-pct"></div>
+              </div>
+            </div>
+            <div class="card full">
+              <div class="sec-hdr"><div class="sec-title">&#128203; Cherry-Pick Detail — Best Bidder Per Item</div></div>
+              <div class="table-wrap">
+                <table><thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Best Bidder</th><th>Best Unit Price</th><th>Best Total</th><th>vs Single-Supplier Total</th></tr></thead>
+                <tbody id="qcs-savings-table"></tbody></table>
+              </div>
+            </div>
+          </div>
+
+          <!-- QCS-6: Risk Flags -->
+          <div class="panel" id="qcs-panel-flags">
+            <div class="two-col">
+              <div class="card">
+                <div class="sec-hdr"><div class="sec-title">&#9888;&#65039; Commercial Risk Flags</div></div>
+                <div id="qcs-flags-list"></div>
+              </div>
+              <div class="card">
+                <div class="sec-hdr"><div class="sec-title">&#128202; Price Spread Summary</div></div>
+                <div class="table-wrap">
+                  <table><thead><tr><th>Item</th><th>Low</th><th>High</th><th>Spread %</th><th>Risk</th></tr></thead>
+                  <tbody id="qcs-spread-table"></tbody></table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /qcs-content -->
+
       </div><!-- /content-area -->
     </div><!-- /dashboard-layout -->
   </div><!-- /dashLayout -->
@@ -530,6 +725,8 @@ BID014,Apex Materials,Logistics,Pallet,1000,2.30,2300,4,Original
 BID015,TechSource,Logistics,Pallet,950,2.05,1947,6,Original`;
 
 let bids=[];
+let qcsData=null;
+let appMode='generic'; // 'generic' | 'qcs'
 
 /* client-side fallback parser (used for sample data & offline) */
 function parseCSV(t){
@@ -557,22 +754,26 @@ async function uploadToAPI(file){
   }
   const d=await res.json();
   if(d.error){toast('Error: '+d.error);return null;}
+  // QCS format detected by backend
+  if(d.type==='qcs'){
+    qcsData=d;
+    return {mode:'qcs'};
+  }
+  // Generic format
   if(d.unmatched_cols&&d.unmatched_cols.length)
     toast('Note: '+d.unmatched_cols.length+' column(s) not recognised — ignored');
-  if(d.columns_detected){
-    const mapped=Object.keys(d.columns_detected).join(', ');
-    console.info('Columns mapped:',d.columns_detected);
-  }
-  return d.records;
+  return {mode:'generic',records:d.records};
+}
+
+function _handleResult(result,fname){
+  if(!result)return;
+  if(result.mode==='qcs'){showQcsMenu(fname);}
+  else{bids=result.records;showMenu(fname);}
 }
 
 function handleFile(e){
   const f=e.target.files[0];if(!f)return;
-  uploadToAPI(f).then(records=>{
-    if(!records)return;
-    bids=records;showMenu(f.name);
-  }).catch(()=>{
-    // server not available — parse client-side
+  uploadToAPI(f).then(r=>_handleResult(r,f.name)).catch(()=>{
     const r=new FileReader();
     r.onload=ev=>{bids=parseCSV(ev.target.result);showMenu(f.name);};
     r.readAsText(f);
@@ -582,10 +783,7 @@ function doDrag(e,on){e.preventDefault();g('uploadZone').classList.toggle('over'
 function doDrop(e){
   e.preventDefault();doDrag(e,false);
   const f=e.dataTransfer.files[0];if(!f)return;
-  uploadToAPI(f).then(records=>{
-    if(!records)return;
-    bids=records;showMenu(f.name);
-  }).catch(()=>{
+  uploadToAPI(f).then(r=>_handleResult(r,f.name)).catch(()=>{
     const r=new FileReader();
     r.onload=ev=>{bids=parseCSV(ev.target.result);showMenu(f.name);};
     r.readAsText(f);
@@ -650,6 +848,16 @@ function applyColumnMap(){
 }
 
 function showMenu(fname){
+  appMode='generic';
+  // Switch sidebar to generic
+  g('generic-btns').style.display='';g('qcs-btns').style.display='none';
+  g('generic-actions').style.display='';g('qcs-actions').style.display='none';
+  g('sidebar-label').textContent='Analysis Modules';
+  // Switch content to generic
+  g('qcs-content').style.display='none';
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.ana-btn').forEach(b=>b.classList.remove('active'));
+
   g('uploadZone').style.display='none';
   g('fileBar').classList.add('show');
   g('fileName').textContent=fname;
@@ -657,10 +865,30 @@ function showMenu(fname){
   const prods=[...new Set(bids.map(b=>b.Product))];
   g('fileMeta').textContent=bids.length+' records  |  '+supps.length+' suppliers  |  '+prods.length+' products';
   g('dashLayout').style.display='block';
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
-  document.querySelectorAll('.ana-btn').forEach(b=>b.classList.remove('active'));
   renderPreview();
   toast('File loaded — '+bids.length+' bid records ready');
+}
+
+function showQcsMenu(fname){
+  appMode='qcs';
+  const nb=qcsData.num_bidders;
+  const ni=qcsData.line_items.length;
+  // Switch sidebar to QCS
+  g('generic-btns').style.display='none';g('qcs-btns').style.display='';
+  g('generic-actions').style.display='none';g('qcs-actions').style.display='';
+  g('sidebar-label').textContent='QCS Analysis';
+  // Switch content to QCS
+  g('qcs-content').style.display='block';
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.ana-btn').forEach(b=>b.classList.remove('active'));
+
+  g('uploadZone').style.display='none';
+  g('fileBar').classList.add('show');
+  g('fileName').textContent=fname;
+  g('fileMeta').textContent=nb+' bidders  |  '+ni+' line items  |  QCS Format';
+  g('dashLayout').style.display='block';
+  renderQcsProjCard();
+  toast('QCS file loaded — '+nb+' bidders, '+ni+' line items');
 }
 
 function renderPreview(){
@@ -708,6 +936,36 @@ function resetDash(){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
   document.querySelectorAll('.ana-btn').forEach(b=>b.classList.remove('active'));
   toast('Dashboard cleared');
+}
+
+/* ── QCS helpers ── */
+function qfmt(n){return n==null?'-':'$'+Math.round(n).toLocaleString();}
+function qfmtU(n){return n==null?'-':'$'+Number(n).toFixed(2);}
+
+function runQcsAnalysis(type){
+  if(!qcsData)return;
+  const panel=g('qcs-panel-'+type);
+  const btn=g('qbtn-'+type);
+  if(btn)btn.classList.add('active');
+  panel.classList.remove('show');
+  void panel.offsetWidth;
+  panel.classList.add('show');
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
+  switch(type){
+    case 'summary': renderQcsSummary(); break;
+    case 'ranking': renderQcsRanking(); break;
+    case 'heatmap': renderQcsHeatmap(); break;
+    case 'lowest':  renderQcsLowest();  break;
+    case 'savings': renderQcsSavings(); break;
+    case 'flags':   renderQcsFlags();   break;
+  }
+  toast('QCS '+type+' analysis complete');
+}
+
+function runQcsAll(){
+  ['summary','ranking','heatmap','lowest','savings','flags']
+    .forEach((t,i)=>setTimeout(()=>runQcsAnalysis(t),i*140));
+  toast('Running all QCS analyses…');
 }
 
 /* helpers */
@@ -945,6 +1203,344 @@ function renderAlternate(){
     }).join('')+'</tbody></table>';
 }
 
+/* ════════════════════════════════════════════════════════════
+   QCS RENDERING FUNCTIONS
+   ════════════════════════════════════════════════════════════ */
+
+function renderQcsProjCard(){
+  const p=qcsData.project||{};
+  const items=[
+    ['Project',p.name||'—'],
+    ['Site',p.site||'—'],
+    ['Engineering',p.engineering||'—'],
+    ['Bid Due',p.bid_due||'—'],
+    ['Bidders',qcsData.num_bidders],
+    ['Line Items',qcsData.line_items.length],
+  ];
+  g('qcs-proj-info').innerHTML=items.map(([k,v])=>`
+    <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:.7rem 1rem;border:1px solid var(--border2)">
+      <div style="font-size:10px;font-weight:600;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px">${k}</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text)">${v}</div>
+    </div>`).join('');
+}
+
+/* ── QCS-1: Bidder Summary ── */
+function renderQcsSummary(){
+  const bs=qcsData.bidders;
+  const prices=bs.map(b=>b.total_price).filter(p=>p>0);
+  const minP=prices.length?Math.min(...prices):0;
+  g('qbadge-summary').textContent=bs.length+' bidders';
+
+  g('qcs-bidder-cards').innerHTML=bs.map(b=>{
+    const isFirm=b.bid_type&&b.bid_type.toLowerCase().includes('firm')&&!b.bid_type.toLowerCase().includes('budgetary');
+    const isBudg=b.bid_type&&b.bid_type.toLowerCase().includes('budgetary');
+    const isLow=b.total_price&&b.total_price===minP;
+    const pct=minP&&b.total_price?((b.total_price-minP)/minP*100).toFixed(1):null;
+    return`<div class="bidder-card ${isLow?'lowest-card':isBudg?'budg-card':''}">
+      ${isLow?'<div class="bc-crown">&#127942;</div>':''}
+      <div class="bc-badge ${isBudg?'bc-budg':'bc-firm'}">${isBudg?'Budgetary':'Firm'}</div>
+      <div class="bc-name" title="${b.name}">${b.name}</div>
+      <div class="bc-price ${isLow?'low':''}">${qfmt(b.total_price)}</div>
+      <div class="bc-meta">
+        ${b.validity_days!=null?`Valid: ${b.validity_days} days<br>`:''}
+        ${b.bid_valid_until?`Until: ${b.bid_valid_until}<br>`:''}
+        ${pct&&!isLow?`+${pct}% vs lowest`:''}
+        ${isLow?'&#10003; Lowest bid':''}
+      </div>
+    </div>`;
+  }).join('');
+
+  g('qcs-bidder-table').innerHTML=bs.map((b,i)=>{
+    const isFirm=b.bid_type&&!b.bid_type.toLowerCase().includes('budgetary');
+    const pct=minP&&b.total_price?((b.total_price-minP)/minP*100).toFixed(1):null;
+    const badge=b.bid_type?(isFirm?'<span class="chip chip-ok">Firm</span>':'<span class="chip chip-warn">Budgetary</span>'):'—';
+    const vdays=b.validity_days;
+    const vdaysTxt=vdays!=null?`${vdays}d`:'—';
+    const vclass=vdays!=null&&vdays<7?'color:var(--rose);font-weight:700':'';
+    return`<tr>
+      <td><span class="rank-badge ${['r1','r2','r3','rn'][Math.min(i,3)]}">${i+1}</span></td>
+      <td class="strong">${b.name}</td>
+      <td>${badge}</td>
+      <td style="color:var(--text-3)">${b.bid_date||'—'}</td>
+      <td style="color:var(--text-3)">${b.bid_valid_until||'—'}</td>
+      <td style="${vclass}">${vdaysTxt}</td>
+      <td class="strong">${qfmt(b.total_price)}</td>
+      <td>${pct!=null?`<span class="chip ${+pct===0?'chip-ok':'chip-pos'}">+${pct}%</span>`:'<span class="chip chip-ok">Lowest</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── QCS-2: Price Ranking ── */
+function renderQcsRanking(){
+  const bs=[...qcsData.bidders].filter(b=>b.total_price>0)
+             .sort((a,b)=>a.total_price-b.total_price);
+  const minP=bs.length?bs[0].total_price:1;
+
+  g('qcs-rank-table').innerHTML=bs.map((b,i)=>{
+    const isBudg=b.bid_type&&b.bid_type.toLowerCase().includes('budgetary');
+    const pct=((b.total_price-minP)/minP*100).toFixed(1);
+    const badge=isBudg?'<span class="chip chip-warn">Budgetary</span>':'<span class="chip chip-ok">Firm</span>';
+    return`<tr>
+      <td><span class="rank-badge ${['r1','r2','r3','rn'][Math.min(i,3)]}">${i+1}</span></td>
+      <td class="strong">${b.name}</td>
+      <td>${badge}</td>
+      <td class="strong">${qfmt(b.total_price)}</td>
+      <td>${i===0?'<span class="chip chip-ok">Baseline</span>':`<span class="chip chip-pos">+${pct}%</span>`}</td>
+    </tr>`;
+  }).join('');
+
+  // Draw bar chart
+  setTimeout(()=>drawQcsRankChart(bs),80);
+}
+
+function drawQcsRankChart(bidders){
+  const canvas=g('qcs-rank-chart');
+  if(!canvas)return;
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||500,H=260;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const pad={t:20,r:12,b:60,l:80};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const vals=bidders.map(b=>b.total_price);
+  const maxV=Math.max(...vals)*1.15;
+  const bW=Math.min(cW/bidders.length*0.58,50);
+  const gap=cW/bidders.length;
+  let p=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<=4;i++){
+      const y=pad.t+cH*(1-i/4);
+      ctx.strokeStyle='rgba(0,0,0,0.05)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cW,y);ctx.stroke();
+      ctx.fillStyle='#B8AEC8';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='right';
+      ctx.fillText('$'+Math.round(maxV*i/4/1e6).toFixed(1)+'M',pad.l-8,y+4);
+    }
+    bidders.forEach((b,i)=>{
+      const x=pad.l+gap*i+gap/2-bW/2;
+      const bH=(vals[i]/maxV)*cH*p;const y=pad.t+cH-bH;
+      const c=i===0?'#059669':PAL[(i+1)%PAL.length];
+      const gr=ctx.createLinearGradient(0,y,0,pad.t+cH);
+      gr.addColorStop(0,c);gr.addColorStop(1,c+'44');
+      ctx.fillStyle=gr;ctx.beginPath();
+      const r=5;ctx.moveTo(x+r,y);ctx.lineTo(x+bW-r,y);
+      ctx.quadraticCurveTo(x+bW,y,x+bW,y+r);
+      ctx.lineTo(x+bW,pad.t+cH);ctx.lineTo(x,pad.t+cH);ctx.lineTo(x,y+r);
+      ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#8B7FA8';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='center';
+      ctx.fillText(b.name.length>10?b.name.slice(0,8)+'…':b.name,x+bW/2,pad.t+cH+16);
+      if(p>=0.98){
+        ctx.fillStyle=c;ctx.font='bold 10px DM Sans,sans-serif';
+        ctx.fillText('$'+Math.round(vals[i]/1e6).toFixed(2)+'M',x+bW/2,y-7);
+      }
+    });
+    if(p<1){p=Math.min(1,p+0.055);requestAnimationFrame(frame);}
+  }
+  frame();
+}
+
+/* ── QCS-3: Line Item Heatmap ── */
+function renderQcsHeatmap(){
+  const items=qcsData.line_items;
+  const nb=qcsData.num_bidders;
+  if(!items.length){g('qcs-heatmap-wrap').innerHTML='<p style="padding:2rem;text-align:center;color:var(--text-3)">No line items found in this file.</p>';return;}
+
+  const bidderNames=qcsData.bidders.map(b=>b.name);
+  const labelW=220;
+  const cols=`${labelW}px `+Array(nb).fill('1fr').join(' ');
+  let html=`<div class="qcs-hm" style="grid-template-columns:${cols}">`;
+  // Header row
+  html+='<div></div>';
+  bidderNames.forEach(n=>`<div class="qcs-col-hdr">${n.length>12?n.slice(0,10)+'…':n}</div>`).forEach(h=>html+=h);
+
+  // Data rows (limit to 60 to keep UI manageable)
+  const display=items.slice(0,60);
+  display.forEach(item=>{
+    const rowPrices=qcsData.bidders.map(b=>item.prices[String(b.num)]).filter(v=>v!=null&&v>0);
+    const minP=rowPrices.length?Math.min(...rowPrices):null;
+    const maxP=rowPrices.length?Math.max(...rowPrices):null;
+    const spread=minP&&maxP&&minP>0?((maxP-minP)/minP*100):0;
+    const desc=item.description.length>38?item.description.slice(0,36)+'…':item.description;
+    html+=`<div class="qcs-hm-label" title="${item.description}">${desc}</div>`;
+    qcsData.bidders.forEach(b=>{
+      const price=item.prices[String(b.num)];
+      if(!price||price<=0){
+        html+=`<div class="qcs-cell na-cell">N/A</div>`;
+        return;
+      }
+      const n=maxP===minP?0.5:Math.min(1,(price-minP)/(maxP-minP));
+      const r=Math.round(244*n+14*(1-n)),gv=Math.round(63*n+165*(1-n)),bv=Math.round(94*n+233*(1-n));
+      const bright=(r*299+gv*587+bv*114)/1000;
+      const tc=bright>140?'#1A1523':'#ffffff';
+      html+=`<div class="qcs-cell" style="background:rgb(${r},${gv},${bv});color:${tc}" title="${b.name}: ${qfmtU(price)}">${qfmtU(price)}</div>`;
+    });
+  });
+  html+='</div>';
+  if(items.length>60)html+=`<p style="font-size:12px;color:var(--text-3);margin-top:.75rem;text-align:center">Showing first 60 of ${items.length} items</p>`;
+  g('qcs-heatmap-wrap').innerHTML=html;
+}
+
+/* ── QCS-4: Lowest Per Item ── */
+function renderQcsLowest(){
+  const items=qcsData.line_items;
+  g('qbadge-lowest').textContent=items.length+' line items';
+
+  const rows=items.map(item=>{
+    const entries=qcsData.bidders.map(b=>({b,p:item.prices[String(b.num)]})).filter(e=>e.p&&e.p>0);
+    if(!entries.length)return null;
+    entries.sort((a,b)=>a.p-b.p);
+    const best=entries[0];
+    const worst=entries[entries.length-1];
+    const spread=((worst.p-best.p)/best.p*100).toFixed(1);
+    return{item,best,worst,spread};
+  }).filter(Boolean);
+
+  // Sort by spread descending (most competitive at top)
+  rows.sort((a,b)=>+b.spread-+a.spread);
+
+  g('qcs-lowest-table').innerHTML=rows.map(({item,best,worst,spread})=>{
+    const spreadClass=+spread>50?'chip-pos':+spread>20?'chip-warn':'chip-ok';
+    const desc=item.description.length>45?item.description.slice(0,43)+'…':item.description;
+    const sec=item.section.replace('Pricing for ','').replace('Equipment/ ','');
+    return`<tr>
+      <td class="strong" title="${item.description}" style="max-width:260px;white-space:normal;font-size:12px">${desc}</td>
+      <td style="color:var(--text-3);font-size:11px;max-width:120px;white-space:normal">${sec}</td>
+      <td style="color:var(--text-3)">${item.qty?item.qty.toLocaleString():'—'}</td>
+      <td style="color:var(--text-3)">${item.unit||'—'}</td>
+      <td style="color:var(--emerald);font-weight:700">${qfmtU(best.p)}</td>
+      <td><span class="chip chip-ok" style="font-size:11px">${best.b.name}</span></td>
+      <td style="color:var(--rose)">${qfmtU(worst.p)}</td>
+      <td><span class="chip ${spreadClass}">${spread}%</span></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── QCS-5: Savings Analysis ── */
+function renderQcsSavings(){
+  const bs=qcsData.bidders.filter(b=>b.total_price>0);
+  if(!bs.length)return;
+  const sorted=[...bs].sort((a,b)=>a.total_price-b.total_price);
+  const bestSupplier=sorted[0];
+
+  // Cherry-pick: sum lowest total per item (use totals where available, else qty*price)
+  let cherryTotal=0;
+  const cherryDetail=[];
+
+  qcsData.line_items.forEach(item=>{
+    const entries=qcsData.bidders.map(b=>{
+      const up=item.prices[String(b.num)];
+      const tot=item.totals[String(b.num)];
+      return{b,up,tot:tot||((up&&item.qty)?up*item.qty:null)};
+    }).filter(e=>e.tot&&e.tot>0);
+    if(!entries.length)return;
+    entries.sort((a,b)=>a.tot-b.tot);
+    const best=entries[0];
+    // What would best supplier charge for this item?
+    const bsEntry=entries.find(e=>e.b.num===bestSupplier.num);
+    const bsTot=bsEntry?bsEntry.tot:null;
+    cherryTotal+=best.tot;
+    cherryDetail.push({item,best,bsTot});
+  });
+
+  const savings=bestSupplier.total_price-cherryTotal;
+  const savingsPct=bestSupplier.total_price>0?(savings/bestSupplier.total_price*100).toFixed(1):0;
+
+  animN('qs-best',0,bestSupplier.total_price,'$');
+  g('qs-best-name').textContent=bestSupplier.name+' (best single supplier)';
+  animN('qs-cherry',0,cherryTotal,'$');
+  animN('qs-save',0,Math.max(0,savings),'$');
+  g('qs-save-pct').textContent=(savings>0?savingsPct+'% potential saving':'No saving vs single supplier');
+
+  g('qcs-savings-table').innerHTML=cherryDetail.map(({item,best,bsTot})=>{
+    const desc=item.description.length>40?item.description.slice(0,38)+'…':item.description;
+    const diff=bsTot&&best.tot?(bsTot-best.tot):null;
+    const diffTxt=diff!=null?(diff>0?`<span class="chip chip-ok">-${qfmt(diff)}</span>`:`<span style="color:var(--text-3)">same</span>`):'—';
+    return`<tr>
+      <td class="strong" style="font-size:12px;max-width:220px;white-space:normal">${desc}</td>
+      <td style="color:var(--text-3)">${item.qty?item.qty.toLocaleString():'—'}</td>
+      <td style="color:var(--text-3)">${item.unit||'—'}</td>
+      <td><span class="chip chip-ok" style="font-size:11px">${best.b.name}</span></td>
+      <td style="color:var(--emerald);font-weight:600">${qfmtU(best.up)}</td>
+      <td style="color:var(--emerald);font-weight:600">${qfmt(best.tot)}</td>
+      <td>${diffTxt}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── QCS-6: Risk Flags ── */
+function renderQcsFlags(){
+  const bs=qcsData.bidders;
+  const flags=[];
+
+  // Flag budgetary bids
+  const budgBidders=bs.filter(b=>b.bid_type&&b.bid_type.toLowerCase().includes('budgetary'));
+  if(budgBidders.length){
+    flags.push({type:'warn',em:'⚠️',ttl:'Budgetary Bids Detected',
+      sub:`${budgBidders.map(b=>b.name).join(', ')} submitted budgetary (non-firm) bids. Prices may change significantly at award and are less reliable for comparison.`});
+  }
+
+  // Flag very short bid validity
+  const shortValidity=bs.filter(b=>b.validity_days!=null&&b.validity_days<7);
+  if(shortValidity.length){
+    flags.push({type:'danger',em:'🔴',ttl:'Critically Short Bid Validity',
+      sub:`${shortValidity.map(b=>`${b.name} (${b.validity_days} day${b.validity_days!==1?'s':''})`).join(', ')} — these bids may expire before award. Expedite decision-making or request extension.`});
+  }
+
+  // Flag partial bidders (some items not priced)
+  const totalItems=qcsData.line_items.length;
+  bs.forEach(b=>{
+    const priced=qcsData.line_items.filter(it=>it.prices[String(b.num)]&&it.prices[String(b.num)]>0).length;
+    const missing=totalItems-priced;
+    if(missing>0&&missing>totalItems*0.1){
+      flags.push({type:'info',em:'ℹ️',ttl:`${b.name} — Incomplete Pricing`,
+        sub:`${missing} of ${totalItems} line items not priced. Verify scope coverage before comparing total bids.`});
+    }
+  });
+
+  // Flag large price spreads
+  const highSpread=qcsData.line_items.filter(item=>{
+    const prices=bs.map(b=>item.prices[String(b.num)]).filter(p=>p&&p>0);
+    if(prices.length<2)return false;
+    const sp=((Math.max(...prices)-Math.min(...prices))/Math.min(...prices)*100);
+    return sp>100;
+  });
+  if(highSpread.length){
+    flags.push({type:'warn',em:'📊',ttl:`${highSpread.length} Items with >100% Price Spread`,
+      sub:`High variance on: ${highSpread.slice(0,3).map(i=>i.description.slice(0,30)).join('; ')}${highSpread.length>3?'…':''}. Investigate scope alignment or specification differences.`});
+  }
+
+  if(!flags.length){
+    flags.push({type:'ok',em:'✅',ttl:'No Critical Flags Detected',sub:'All bids appear commercially reasonable. Proceed with technical evaluation.'});
+  }
+
+  g('qcs-flags-list').innerHTML=flags.map(f=>`
+    <div class="flag-card ${f.type}">
+      <div class="flag-em">${f.em}</div>
+      <div><div class="flag-ttl">${f.ttl}</div><div class="flag-sub">${f.sub}</div></div>
+    </div>`).join('');
+
+  // Price spread summary table (top 10 by spread)
+  const spreadRows=qcsData.line_items.map(item=>{
+    const prices=bs.map(b=>item.prices[String(b.num)]).filter(p=>p&&p>0);
+    if(prices.length<2)return null;
+    const lo=Math.min(...prices),hi=Math.max(...prices);
+    const sp=((hi-lo)/lo*100).toFixed(0);
+    return{item,lo,hi,sp:+sp};
+  }).filter(Boolean).sort((a,b)=>b.sp-a.sp).slice(0,12);
+
+  g('qcs-spread-table').innerHTML=spreadRows.map(({item,lo,hi,sp})=>{
+    const riskClass=sp>100?'chip-pos':sp>50?'chip-warn':'chip-ok';
+    const desc=item.description.length>30?item.description.slice(0,28)+'…':item.description;
+    return`<tr>
+      <td style="font-size:11px;max-width:180px;white-space:normal" title="${item.description}">${desc}</td>
+      <td style="color:var(--emerald);font-size:12px">${qfmtU(lo)}</td>
+      <td style="color:var(--rose);font-size:12px">${qfmtU(hi)}</td>
+      <td><span class="chip ${riskClass}">${sp}%</span></td>
+      <td style="font-size:11px">${sp>100?'🔴 High':sp>50?'🟡 Med':'🟢 Low'}</td>
+    </tr>`;
+  }).join('');
+}
+
 /* ── CHARTS ── */
 function drawCost(ss,tots){
   const canvas=g('costChart');const dpr=window.devicePixelRatio||1;
@@ -1037,6 +1633,24 @@ function animNF(elId,start,end,pre){
 
 /* ── EXPORT ── */
 function exportReport(){
+  if(appMode==='qcs'){
+    if(!qcsData){toast('Load a QCS file first');return;}
+    // Export line items as CSV
+    const rows=[['Description','Section','Unit','Qty',...qcsData.bidders.map(b=>b.name+' Unit Price'),...qcsData.bidders.map(b=>b.name+' Total')]];
+    qcsData.line_items.forEach(it=>{
+      rows.push([
+        it.description,it.section,it.unit||'',it.qty||'',
+        ...qcsData.bidders.map(b=>it.prices[String(b.num)]||''),
+        ...qcsData.bidders.map(b=>it.totals[String(b.num)]||''),
+      ]);
+    });
+    const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download='BIDX-QCS-'+new Date().toISOString().split('T')[0]+'.csv';
+    a.click();toast('QCS report exported');
+    return;
+  }
   if(!bids.length){toast('Load a file first');return;}
   const h=Object.keys(bids[0]);
   const csv=[h.join(','),...bids.map(b=>h.map(k=>b[k]).join(','))].join('\n');
