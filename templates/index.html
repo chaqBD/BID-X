@@ -8,38 +8,39 @@
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 :root {
-  --bg:#FEFAF5;--bg2:#FFF8EF;--surface:#FFFFFF;
-  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.04);
-  --coral:#FF6540;--coral-lt:#FFF0EC;
-  --violet:#7C3AED;--violet-lt:#F3EEFF;
-  --teal:#0EA5E9;--teal-lt:#EEF9FF;
-  --emerald:#059669;--emerald-lt:#EDFBF4;
-  --rose:#F43F5E;--rose-lt:#FFF0F3;
-  --amber:#F59E0B;--amber-lt:#FFFBEB;
-  --indigo:#4F46E5;--indigo-lt:#EEF2FF;
-  --text:#1A1523;--text-2:#4A4458;--text-3:#8B7FA8;
-  --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
-  --shadow:0 4px 16px rgba(0,0,0,0.07),0 1px 4px rgba(0,0,0,0.04);
-  --shadow-lg:0 12px 40px rgba(0,0,0,0.09),0 4px 12px rgba(0,0,0,0.05);
-  --radius:16px;--radius-sm:10px;
+  /* ── Corporate palette ── */
+  --navy:#1C2E4A;--navy-mid:#2A4160;--navy-lt:#EEF2F8;
+  --forest:#2A4A35;--forest-mid:#3A6248;--forest-lt:#EBF4EE;
+  --steel:#2E5E8E;--steel-lt:#EBF3FA;
+  --sienna:#7A3D20;--sienna-lt:#F5EDE5;
+  --wine:#6B1C28;--wine-lt:#F2E8EA;
+  --slate:#4A5568;--slate-lt:#F0F2F5;
+
+  /* ── Map old names → corporate colours (keeps JS references working) ── */
+  --bg:#F5F3EF;--bg2:#EDEBE6;--surface:#FFFFFF;
+  --border:rgba(28,33,48,0.09);--border2:rgba(28,33,48,0.05);
+  --coral:var(--navy);--coral-lt:var(--navy-lt);
+  --violet:var(--forest);--violet-lt:var(--forest-lt);
+  --teal:var(--steel);--teal-lt:var(--steel-lt);
+  --emerald:var(--forest);--emerald-lt:var(--forest-lt);
+  --rose:var(--wine);--rose-lt:var(--wine-lt);
+  --amber:var(--sienna);--amber-lt:var(--sienna-lt);
+  --indigo:var(--navy-mid);--indigo-lt:var(--navy-lt);
+  --text:#1C2130;--text-2:#3C4255;--text-3:#6B7280;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.05),0 1px 2px rgba(0,0,0,0.04);
+  --shadow:0 4px 16px rgba(0,0,0,0.06),0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.05);
+  --radius:12px;--radius-sm:8px;
   --syne:'Syne',sans-serif;--dm:'DM Sans',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--dm);min-height:100vh;overflow-x:hidden}
-
-/* MESH */
-.mesh-bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
-.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:0.32;animation:drift 16s ease-in-out infinite alternate}
-.b1{width:580px;height:500px;top:-150px;right:-80px;background:radial-gradient(circle,#FF6540,#F59E0B);animation-delay:0s}
-.b2{width:480px;height:480px;bottom:-130px;left:-80px;background:radial-gradient(circle,#7C3AED,#0EA5E9);animation-delay:-7s}
-.b3{width:320px;height:320px;top:45%;left:38%;background:radial-gradient(circle,#F43F5E,#7C3AED);animation-delay:-13s;opacity:0.14}
-@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(28px,18px) scale(1.06)}}
+body{background:var(--bg);color:var(--text);font-family:var(--dm);min-height:100vh;overflow-x:hidden;border-top:3px solid var(--navy)}
 
 /* HEADER */
-header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:68px;background:rgba(254,250,245,0.88);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid var(--border)}
+header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;background:rgba(245,243,239,0.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .logo{display:flex;align-items:center;gap:10px}
-.logo-mark{width:38px;height:38px;background:linear-gradient(135deg,var(--coral),var(--violet));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--syne);font-weight:800;font-size:13px;color:#fff;box-shadow:0 4px 12px rgba(255,101,64,0.35)}
-.logo-name{font-family:var(--syne);font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--coral) 30%,var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
+.logo-mark{width:34px;height:34px;background:var(--navy);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--syne);font-weight:800;font-size:12px;color:#fff;letter-spacing:.02em}
+.logo-name{font-family:var(--syne);font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-0.5px}
 .logo-tagline{font-size:10px;font-weight:500;color:var(--text-3);letter-spacing:0.08em;text-transform:uppercase;margin-top:1px}
 .header-right{display:flex;align-items:center;gap:10px}
 .pill-live{display:flex;align-items:center;gap:6px;background:var(--emerald-lt);color:var(--emerald);font-size:11px;font-weight:600;padding:5px 12px;border-radius:100px;letter-spacing:0.04em}
@@ -48,33 +49,29 @@ header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify
 .btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--dm);font-size:13px;font-weight:600;padding:9px 18px;border-radius:100px;cursor:pointer;transition:all 0.2s;border:none}
 .btn-ghost{background:transparent;color:var(--text-2);border:1.5px solid var(--border)}
 .btn-ghost:hover{background:var(--surface);box-shadow:var(--shadow-sm)}
-.btn-primary{background:linear-gradient(135deg,var(--coral),#E0451E);color:#fff;box-shadow:0 4px 14px rgba(255,101,64,.35)}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,101,64,.45)}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 4px 14px rgba(28,46,74,.3)}
+.btn-primary:hover{transform:translateY(-1px);background:var(--navy-mid);box-shadow:0 6px 20px rgba(28,46,74,.4)}
 .btn-primary:active{transform:translateY(0)}
 
 /* MAIN */
 main{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:2rem 2rem 4rem}
 
 /* UPLOAD */
-.upload-zone{background:var(--surface);border:2px dashed rgba(124,58,237,.22);border-radius:var(--radius);padding:3.5rem 2rem;text-align:center;cursor:pointer;transition:all .3s;box-shadow:var(--shadow-sm);margin-bottom:2rem;position:relative;overflow:hidden}
-.upload-zone::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,101,64,.04),rgba(124,58,237,.04));opacity:0;transition:opacity .3s}
-.upload-zone:hover::before,.upload-zone.over::before{opacity:1}
-.upload-zone:hover{border-color:rgba(124,58,237,.45);box-shadow:var(--shadow)}
-.upload-zone.over{border-color:var(--violet);background:var(--violet-lt)}
-.upload-emoji{font-size:3rem;display:block;margin-bottom:1rem;animation:flt 3s ease-in-out infinite}
-@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.upload-title{font-family:var(--syne);font-size:24px;font-weight:800;color:var(--text);margin-bottom:8px}
+.upload-zone{background:var(--surface);border:2px dashed rgba(28,46,74,.2);border-radius:var(--radius);padding:3.5rem 2rem;text-align:center;cursor:pointer;transition:all .3s;box-shadow:var(--shadow-sm);margin-bottom:2rem}
+.upload-zone:hover{border-color:var(--navy);box-shadow:var(--shadow);background:var(--navy-lt)}
+.upload-zone.over{border-color:var(--navy);background:var(--navy-lt)}
+.upload-title{font-family:var(--syne);font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px}
 .upload-sub{font-size:13px;color:var(--text-3);margin-bottom:1.75rem;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.6}
-.sample-link{display:inline-block;margin-top:1.1rem;font-size:13px;color:var(--violet);font-weight:600;cursor:pointer;background:none;border:none;text-decoration:underline;text-underline-offset:3px}
+.sample-link{display:inline-block;margin-top:1.1rem;font-size:13px;color:var(--steel);font-weight:600;cursor:pointer;background:none;border:none;text-decoration:underline;text-underline-offset:3px}
 
 /* FILE BAR */
 .file-bar{display:none;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow-sm)}
 .file-bar.show{display:flex}
-.file-icon-box{width:38px;height:38px;background:var(--coral-lt);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.file-icon-box{width:34px;height:34px;background:var(--navy-lt);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--navy);font-family:var(--syne);flex-shrink:0}
 .file-info{flex:1}
 .file-name{font-weight:600;font-size:14px;color:var(--text)}
 .file-meta{font-size:12px;color:var(--text-3);margin-top:2px}
-.file-change{font-size:12px;color:var(--violet);font-weight:600;cursor:pointer;background:none;border:none;text-decoration:underline;text-underline-offset:2px}
+.file-change{font-size:12px;color:var(--navy);font-weight:600;cursor:pointer;background:none;border:none;text-decoration:underline;text-underline-offset:2px}
 
 /* DASHBOARD LAYOUT */
 .dashboard-layout{display:flex;gap:1.25rem;align-items:flex-start}
@@ -112,8 +109,8 @@ main{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:2rem 2re
 .ana-indigo.active .ana-btn-label{color:var(--indigo)}
 
 .sidebar-actions{padding:.85rem 1rem;border-top:1px solid var(--border2);display:flex;flex-direction:column;gap:.5rem}
-.btn-run-all{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--syne);font-size:12px;font-weight:700;padding:9px 14px;width:100%;border-radius:100px;cursor:pointer;border:none;background:linear-gradient(135deg,var(--coral),var(--violet));color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.25);transition:all .2s}
-.btn-run-all:hover{box-shadow:0 6px 20px rgba(124,58,237,.38);transform:translateY(-1px)}
+.btn-run-all{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--syne);font-size:12px;font-weight:700;padding:9px 14px;width:100%;border-radius:6px;cursor:pointer;border:none;background:var(--navy);color:#fff;box-shadow:0 4px 14px rgba(28,46,74,.25);transition:all .2s}
+.btn-run-all:hover{box-shadow:0 6px 20px rgba(28,46,74,.35);transform:translateY(-1px)}
 .btn-run-all:active{transform:translateY(0)}
 .btn-reset{display:inline-flex;align-items:center;justify-content:center;gap:5px;font-family:var(--dm);font-size:11px;font-weight:600;padding:7px 14px;width:100%;border-radius:100px;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--text-3);transition:all .2s}
 .btn-reset:hover{background:var(--bg2);color:var(--text)}
@@ -153,25 +150,25 @@ main{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:2rem 2re
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead th{text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;border-bottom:1.5px solid var(--border);white-space:nowrap}
 tbody tr{border-bottom:1px solid var(--border2);transition:background .15s}
-tbody tr:hover{background:rgba(124,58,237,.025)}
+tbody tr:hover{background:rgba(28,46,74,.025)}
 tbody tr:last-child{border-bottom:none}
 td{padding:12px 14px;color:var(--text-2);white-space:nowrap}
 td.strong{color:var(--text);font-weight:600}
 
 /* BADGES */
 .rank-badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;font-size:12px;font-weight:800;font-family:var(--syne)}
-.r1{background:linear-gradient(135deg,#F59E0B,#F97316);color:#fff;box-shadow:0 3px 8px rgba(249,115,22,.35)}
-.r2{background:linear-gradient(135deg,#94A3B8,#64748B);color:#fff}
-.r3{background:linear-gradient(135deg,#C4782A,#92600A);color:#fff}
-.rn{background:#F1F5F9;color:var(--text-3)}
+.r1{background:var(--navy);color:#fff;box-shadow:0 3px 8px rgba(28,46,74,.3)}
+.r2{background:var(--forest);color:#fff}
+.r3{background:var(--steel);color:#fff}
+.rn{background:var(--slate-lt);color:var(--text-3)}
 .tag{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600}
 .tag-orig{background:var(--teal-lt);color:var(--teal)}
 .tag-alt{background:var(--violet-lt);color:var(--violet)}
 .chip{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700}
-.chip-pos{background:#FEE2E2;color:#DC2626}
-.chip-neg{background:#D1FAE5;color:#059669}
-.chip-warn{background:var(--amber-lt);color:#B45309}
-.chip-ok{background:var(--emerald-lt);color:var(--emerald)}
+.chip-pos{background:var(--wine-lt);color:var(--wine)}
+.chip-neg{background:var(--forest-lt);color:var(--forest)}
+.chip-warn{background:var(--sienna-lt);color:var(--sienna)}
+.chip-ok{background:var(--forest-lt);color:var(--forest-mid)}
 
 /* SCORE BAR */
 .score-row{display:flex;align-items:center;gap:10px}
@@ -183,13 +180,13 @@ td.strong{color:var(--text);font-weight:600}
 .score-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.75rem;margin-top:1.25rem}
 .score-card{border-radius:var(--radius-sm);padding:1.1rem;text-align:center;position:relative;border:1.5px solid var(--border2);background:var(--bg2);transition:all .2s}
 .score-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.score-card.winner{background:linear-gradient(135deg,var(--coral-lt),#FFF8EF);border-color:rgba(255,101,64,.3);box-shadow:0 4px 20px rgba(255,101,64,.12)}
+.score-card.winner{background:var(--navy-lt);border-color:rgba(28,46,74,.25);box-shadow:0 4px 20px rgba(28,46,74,.1)}
 .sc-label{font-size:10px;font-weight:600;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
 .sc-score{font-family:var(--syne);font-size:38px;font-weight:800;line-height:1;letter-spacing:-2px}
-.sc-score.top{background:linear-gradient(135deg,var(--coral),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sc-score.top{color:var(--navy)}
 .sc-score.reg{color:var(--text-2)}
 .sc-unit{font-size:10px;color:var(--text-3);margin-top:2px}
-.crown{position:absolute;top:8px;right:10px;font-size:15px}
+.crown{position:absolute;top:8px;right:10px;font-size:12px;font-weight:700;font-family:var(--syne);color:var(--navy);letter-spacing:.04em}
 
 /* HEATMAP */
 .hm-cell{height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:transform .2s;cursor:default}
@@ -209,12 +206,12 @@ td.strong{color:var(--text);font-weight:600}
 .flag-desc{font-size:12px;color:var(--text-3);line-height:1.55}
 
 /* NOTIF */
-.notif{position:fixed;bottom:2rem;right:2rem;background:var(--surface);border-left:4px solid var(--coral);border-radius:var(--radius-sm);padding:1rem 1.5rem;box-shadow:var(--shadow-lg);font-size:13px;font-weight:500;color:var(--text);z-index:1000;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.22,1,.36,1);max-width:320px;display:flex;align-items:center;gap:10px}
+.notif{position:fixed;bottom:2rem;right:2rem;background:var(--navy);border-radius:var(--radius-sm);padding:1rem 1.5rem;box-shadow:var(--shadow-lg);font-size:13px;font-weight:500;color:#fff;z-index:1000;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.22,1,.36,1);max-width:320px;display:flex;align-items:center;gap:10px}
 .notif.show{transform:translateY(0);opacity:1}
 
 /* FOOTER */
 footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.25rem 2rem;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-3)}
-.footer-logo{font-family:var(--syne);font-weight:800;font-size:15px;background:linear-gradient(135deg,var(--coral),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footer-logo{font-family:var(--syne);font-weight:800;font-size:15px;color:var(--navy)}
 
 /* ANIMS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
@@ -231,20 +228,20 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
 @media(max-width:640px){.kpi-grid{grid-template-columns:1fr 1fr}main{padding:1rem}header{padding:0 1rem}}
 
 /* ── QCS MODE ── */
-.qcs-badge{display:inline-flex;align-items:center;gap:6px;background:#FEF3C7;color:#92400E;font-size:10px;font-weight:700;padding:4px 10px;border-radius:100px;letter-spacing:.05em;text-transform:uppercase}
-.bidder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.25rem}
-.bidder-card{background:var(--surface);border-radius:var(--radius-sm);border:1.5px solid var(--border2);padding:1.1rem 1.25rem;transition:all .2s;position:relative}
+.qcs-badge{display:inline-flex;align-items:center;gap:6px;background:var(--navy-lt);color:var(--navy);font-size:10px;font-weight:700;padding:4px 10px;border-radius:4px;letter-spacing:.05em;text-transform:uppercase}
+.bidder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:1rem;margin-bottom:1.25rem}
+.bidder-card{background:var(--surface);border-radius:var(--radius-sm);border:1.5px solid var(--border2);border-top:3px solid var(--border);padding:1.1rem 1.25rem;transition:all .2s;position:relative}
 .bidder-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
-.bidder-card.lowest-card{border-color:rgba(5,150,105,.3);background:var(--emerald-lt)}
-.bidder-card.budg-card{border-color:rgba(245,158,11,.3);background:var(--amber-lt)}
-.bc-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:100px;letter-spacing:.06em;text-transform:uppercase;display:inline-block;margin-bottom:.5rem}
-.bc-firm{background:var(--emerald-lt);color:var(--emerald)}
-.bc-budg{background:var(--amber-lt);color:#B45309}
+.bidder-card.lowest-card{border-top-color:var(--forest);background:var(--forest-lt)}
+.bidder-card.budg-card{border-top-color:var(--sienna);background:var(--sienna-lt)}
+.bc-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;letter-spacing:.06em;text-transform:uppercase;display:inline-block;margin-bottom:.5rem}
+.bc-firm{background:var(--forest-lt);color:var(--forest)}
+.bc-budg{background:var(--sienna-lt);color:var(--sienna)}
 .bc-name{font-family:var(--syne);font-size:14px;font-weight:800;color:var(--text);margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bc-price{font-family:var(--syne);font-size:20px;font-weight:800;letter-spacing:-1px;margin:.35rem 0;color:var(--coral)}
-.bc-price.low{color:var(--emerald)}
+.bc-price{font-family:var(--syne);font-size:20px;font-weight:800;letter-spacing:-1px;margin:.35rem 0;color:var(--navy)}
+.bc-price.low{color:var(--forest)}
 .bc-meta{font-size:11px;color:var(--text-3);line-height:1.7}
-.bc-crown{position:absolute;top:10px;right:12px;font-size:16px}
+.bc-crown{position:absolute;top:10px;right:12px;font-size:10px;font-weight:800;font-family:var(--syne);color:var(--forest);letter-spacing:.04em;text-transform:uppercase}
 .hm-wrap{overflow-x:auto;padding-bottom:4px}
 .qcs-hm{display:grid;gap:3px}
 .qcs-hm-label{font-size:10px;font-weight:500;color:var(--text-2);padding:0 4px;align-self:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -252,12 +249,12 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
 .qcs-cell{height:30px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;cursor:default;transition:transform .15s;white-space:nowrap}
 .qcs-cell:hover{transform:scale(1.1);z-index:5;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .qcs-cell.na-cell{background:#F1F5F9;color:#CBD5E1;font-size:9px}
-.flag-card{border-radius:var(--radius-sm);border:1.5px solid var(--border2);padding:.9rem 1.1rem;margin-bottom:.7rem;display:flex;align-items:flex-start;gap:11px}
-.flag-card.warn{border-color:rgba(245,158,11,.3);background:var(--amber-lt)}
-.flag-card.danger{border-color:rgba(244,63,94,.3);background:var(--rose-lt)}
-.flag-card.info{border-color:rgba(14,165,233,.3);background:var(--teal-lt)}
-.flag-card.ok{border-color:rgba(5,150,105,.25);background:var(--emerald-lt)}
-.flag-em{font-size:20px;flex-shrink:0;margin-top:1px}
+.flag-card{border-radius:var(--radius-sm);border:1px solid var(--border2);border-left:4px solid var(--slate);padding:.9rem 1.1rem;margin-bottom:.7rem;display:flex;align-items:flex-start;gap:11px;background:var(--surface)}
+.flag-card.warn{border-left-color:var(--sienna);background:var(--sienna-lt)}
+.flag-card.danger{border-left-color:var(--wine);background:var(--wine-lt)}
+.flag-card.info{border-left-color:var(--steel);background:var(--steel-lt)}
+.flag-card.ok{border-left-color:var(--forest);background:var(--forest-lt)}
+.flag-em{font-size:11px;font-weight:800;font-family:var(--syne);letter-spacing:.04em;color:inherit;flex-shrink:0;margin-top:2px;text-transform:uppercase}
 .flag-ttl{font-weight:700;font-size:13px;color:var(--text);margin-bottom:2px}
 .flag-sub{font-size:12px;color:var(--text-3);line-height:1.5}
 .savings-box{border-radius:var(--radius);padding:1.75rem;text-align:center;margin-bottom:1rem}
@@ -268,12 +265,6 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
 </head>
 <body>
 
-<div class="mesh-bg">
-  <div class="blob b1"></div>
-  <div class="blob b2"></div>
-  <div class="blob b3"></div>
-</div>
-
 <header>
   <div class="logo">
     <div class="logo-mark">BX</div>
@@ -283,9 +274,9 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
     </div>
   </div>
   <div class="header-right">
-    <div class="pill-live"><div class="pulse-dot"></div>Live Analysis</div>
-    <button class="btn btn-ghost" onclick="exportReport()">&#8595; Export</button>
-    <button class="btn btn-primary" onclick="g('fi').click()">&#8593; Upload file</button>
+    <div class="pill-live"><div class="pulse-dot"></div>Active</div>
+    <button class="btn btn-ghost" onclick="exportReport()">Export</button>
+    <button class="btn btn-primary" onclick="g('fi').click()">Upload File</button>
   </div>
   <input type="file" id="fi" accept="*/*" style="display:none" onchange="handleFile(event)">
 </header>
@@ -296,17 +287,17 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
   <div class="upload-zone" id="uploadZone"
        onclick="g('fi').click()"
        ondragover="doDrag(event,true)" ondragleave="doDrag(event,false)" ondrop="doDrop(event)">
-    <span class="upload-emoji">&#128203;</span>
+    <div style="font-family:var(--syne);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--text-3);text-transform:uppercase;margin-bottom:1rem">Procurement Intelligence Platform</div>
     <div class="upload-title">Drop your bid file here</div>
-    <p class="upload-sub">Upload a <strong>Quote Comparison Sheet (.xlsm)</strong> for QCS analysis, or any spreadsheet with: <strong>Supplier, Product, Unit_Price, Total_Amount</strong> for generic bid analysis</p>
-    <button class="btn btn-primary" style="pointer-events:none;margin:0 auto">Choose File</button>
+    <p class="upload-sub">Upload a <strong>Quote Comparison Sheet (.xlsm)</strong> for QCS analysis, or any CSV / Excel spreadsheet with supplier bid data for generic analysis.</p>
+    <button class="btn btn-primary" style="pointer-events:none;margin:0 auto">Select File</button>
     <br>
-    <button class="sample-link" onclick="event.stopPropagation();loadSample()">&#8627; Try with sample procurement data</button>
+    <button class="sample-link" onclick="event.stopPropagation();loadSample()">Try with sample data</button>
   </div>
 
   <!-- FILE BAR -->
   <div class="file-bar" id="fileBar">
-    <div class="file-icon-box">&#128196;</div>
+    <div class="file-icon-box">XL</div>
     <div class="file-info">
       <div class="file-name" id="fileName">-</div>
       <div class="file-meta" id="fileMeta">-</div>
@@ -326,83 +317,33 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
 
         <!-- Generic mode buttons -->
         <div id="generic-btns">
-          <button class="ana-btn ana-coral" id="btn-overview" onclick="runAnalysis('overview')">
-            <span class="ana-btn-icon">&#128202;</span>
-            <span class="ana-btn-label">Bid Overview</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
-          <button class="ana-btn ana-violet" id="btn-unitprice" onclick="runAnalysis('unitprice')">
-            <span class="ana-btn-icon">&#128161;</span>
-            <span class="ana-btn-label">Unit Price Analysis</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
-          <button class="ana-btn ana-teal" id="btn-totalcost" onclick="runAnalysis('totalcost')">
-            <span class="ana-btn-icon">&#128176;</span>
-            <span class="ana-btn-label">Total Cost Analysis</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
-          <button class="ana-btn ana-emerald" id="btn-quantity" onclick="runAnalysis('quantity')">
-            <span class="ana-btn-icon">&#128230;</span>
-            <span class="ana-btn-label">Quantity Analysis</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
-          <button class="ana-btn ana-amber" id="btn-ranking" onclick="runAnalysis('ranking')">
-            <span class="ana-btn-icon">&#127942;</span>
-            <span class="ana-btn-label">Supplier Ranking</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
-          <button class="ana-btn ana-rose" id="btn-variance" onclick="runAnalysis('variance')">
-            <span class="ana-btn-icon">&#9888;&#65039;</span>
-            <span class="ana-btn-label">Variance Analysis</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
-          <button class="ana-btn ana-indigo" id="btn-alternate" onclick="runAnalysis('alternate')">
-            <span class="ana-btn-icon">&#128260;</span>
-            <span class="ana-btn-label">Alternate Proposals</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
+          <button class="ana-btn ana-coral" id="btn-overview" onclick="runAnalysis('overview')"><span class="ana-btn-label">Bid Overview</span><span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-violet" id="btn-unitprice" onclick="runAnalysis('unitprice')"><span class="ana-btn-label">Unit Price Analysis</span><span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-teal" id="btn-totalcost" onclick="runAnalysis('totalcost')"><span class="ana-btn-label">Total Cost Analysis</span><span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-emerald" id="btn-quantity" onclick="runAnalysis('quantity')"><span class="ana-btn-label">Quantity Analysis</span><span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-amber" id="btn-ranking" onclick="runAnalysis('ranking')"><span class="ana-btn-label">Supplier Ranking</span><span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-rose" id="btn-variance" onclick="runAnalysis('variance')"><span class="ana-btn-label">Variance Analysis</span><span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-indigo" id="btn-alternate" onclick="runAnalysis('alternate')"><span class="ana-btn-label">Alternate Proposals</span><span class="ana-btn-arrow">›</span></button>
         </div>
 
-        <!-- QCS mode buttons -->
+        <!-- QCS mode buttons (8 modules) -->
         <div id="qcs-btns" style="display:none">
-          <button class="ana-btn ana-coral" id="qbtn-summary" onclick="runQcsAnalysis('summary')">
-            <span class="ana-btn-icon">&#128101;</span>
-            <span class="ana-btn-label">Bidder Summary</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
-          <button class="ana-btn ana-emerald" id="qbtn-ranking" onclick="runQcsAnalysis('ranking')">
-            <span class="ana-btn-icon">&#127942;</span>
-            <span class="ana-btn-label">Price Ranking</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
-          <button class="ana-btn ana-violet" id="qbtn-heatmap" onclick="runQcsAnalysis('heatmap')">
-            <span class="ana-btn-icon">&#128200;</span>
-            <span class="ana-btn-label">Line Item Heatmap</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
-          <button class="ana-btn ana-teal" id="qbtn-lowest" onclick="runQcsAnalysis('lowest')">
-            <span class="ana-btn-icon">&#128203;</span>
-            <span class="ana-btn-label">Lowest Per Item</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
-          <button class="ana-btn ana-amber" id="qbtn-savings" onclick="runQcsAnalysis('savings')">
-            <span class="ana-btn-icon">&#128181;</span>
-            <span class="ana-btn-label">Savings Analysis</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
-          <button class="ana-btn ana-rose" id="qbtn-flags" onclick="runQcsAnalysis('flags')">
-            <span class="ana-btn-icon">&#9888;&#65039;</span>
-            <span class="ana-btn-label">Risk Flags</span>
-            <span class="ana-btn-arrow">›</span>
-          </button>
+          <button class="ana-btn ana-coral"  id="qbtn-summary"     onclick="runQcsAnalysis('summary')">    <span class="ana-btn-label">Bidder Summary</span>   <span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-emerald" id="qbtn-ranking"    onclick="runQcsAnalysis('ranking')">    <span class="ana-btn-label">Price Ranking</span>     <span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-indigo"  id="qbtn-levelling"  onclick="runQcsAnalysis('levelling')">  <span class="ana-btn-label">Bid Levelling</span>     <span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-violet"  id="qbtn-heatmap"    onclick="runQcsAnalysis('heatmap')">    <span class="ana-btn-label">Price Matrix</span>      <span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-teal"    id="qbtn-lowest"     onclick="runQcsAnalysis('lowest')">     <span class="ana-btn-label">Lowest Per Item</span>   <span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-amber"   id="qbtn-savings"    onclick="runQcsAnalysis('savings')">    <span class="ana-btn-label">Savings Analysis</span>  <span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-coral"   id="qbtn-recommendation" onclick="runQcsAnalysis('recommendation')"><span class="ana-btn-label">Recommendation</span><span class="ana-btn-arrow">›</span></button>
+          <button class="ana-btn ana-rose"    id="qbtn-flags"      onclick="runQcsAnalysis('flags')">      <span class="ana-btn-label">Risk Flags</span>        <span class="ana-btn-arrow">›</span></button>
         </div>
 
         <div class="sidebar-actions" id="generic-actions">
-          <button class="btn-run-all" onclick="runAll()">&#9654; Run All</button>
+          <button class="btn-run-all" onclick="runAll()">Run All</button>
           <button class="btn-reset" onclick="resetDash()">&#8635; Reset</button>
         </div>
         <div class="sidebar-actions" id="qcs-actions" style="display:none">
-          <button class="btn-run-all" onclick="runQcsAll()">&#9654; Run All</button>
+          <button class="btn-run-all" onclick="runQcsAll()">Run All</button>
           <button class="btn-reset" onclick="resetDash()">&#8635; Reset</button>
         </div>
       </div>
@@ -413,7 +354,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
         <!-- DATA PREVIEW -->
         <div class="preview-card">
           <div class="sec-hdr">
-            <div class="sec-title">&#128203; Data Preview</div>
+            <div class="sec-title">Data Preview</div>
             <div class="sec-badge" id="preview-badge" style="background:var(--coral-lt);color:var(--coral)"></div>
           </div>
           <div class="table-wrap">
@@ -425,33 +366,29 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
         <div class="panel" id="panel-overview">
           <div class="kpi-grid">
             <div class="kpi-card">
-              <div class="kpi-icon" style="background:var(--coral-lt)">&#128203;</div>
               <div class="kpi-label">Total Bids</div>
-              <div class="kpi-value" id="kv-bids" style="color:var(--coral)">-</div>
+              <div class="kpi-value" id="kv-bids" style="color:var(--navy)">-</div>
               <div class="kpi-sub" id="ks-bids"></div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-icon" style="background:var(--emerald-lt)">&#128201;</div>
               <div class="kpi-label">Lowest Bid</div>
-              <div class="kpi-value" id="kv-low" style="color:var(--emerald)">-</div>
+              <div class="kpi-value" id="kv-low" style="color:var(--forest)">-</div>
               <div class="kpi-sub" id="ks-low"></div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-icon" style="background:var(--rose-lt)">&#128200;</div>
               <div class="kpi-label">Highest Bid</div>
-              <div class="kpi-value" id="kv-high" style="color:var(--rose)">-</div>
+              <div class="kpi-value" id="kv-high" style="color:var(--wine)">-</div>
               <div class="kpi-sub" id="ks-high"></div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-icon" style="background:var(--violet-lt)">&#9889;</div>
               <div class="kpi-label">Avg Unit Price</div>
-              <div class="kpi-value" id="kv-avg" style="color:var(--violet)">-</div>
+              <div class="kpi-value" id="kv-avg" style="color:var(--steel)">-</div>
               <div class="kpi-sub" id="ks-avg"></div>
             </div>
           </div>
           <div class="card full">
             <div class="sec-hdr">
-              <div class="sec-title">&#128203; Full Bid Register</div>
+              <div class="sec-title">Full Bid Register</div>
               <div class="sec-badge" id="bid-badge" style="background:var(--coral-lt);color:var(--coral)"></div>
             </div>
             <div class="table-wrap"><table>
@@ -465,8 +402,8 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
         <div class="panel" id="panel-unitprice">
           <div class="card full">
             <div class="sec-hdr">
-              <div class="sec-title">&#128161; Unit Price Heatmap</div>
-              <div class="sec-badge" style="background:var(--violet-lt);color:var(--violet)">Green = cheapest &nbsp;&#183;&nbsp; Red = most expensive</div>
+              <div class="sec-title">Unit Price Heatmap</div>
+              <div class="sec-badge" style="background:var(--violet-lt);color:var(--violet)">Low price = green &nbsp;&middot;&nbsp; High price = red</div>
             </div>
             <div id="heatmap"></div>
           </div>
@@ -476,16 +413,16 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
         <div class="panel" id="panel-totalcost">
           <div class="two-col">
             <div class="card">
-              <div class="sec-hdr"><div class="sec-title">&#128176; Total Cost by Supplier</div></div>
+              <div class="sec-hdr"><div class="sec-title">Total Cost by Supplier</div></div>
               <canvas id="costChart" height="230"></canvas>
             </div>
             <div class="card">
-              <div class="sec-hdr"><div class="sec-title">&#128665; Avg Delivery Days</div></div>
+              <div class="sec-hdr"><div class="sec-title">Avg Delivery Days</div></div>
               <canvas id="delivChart" height="230"></canvas>
             </div>
           </div>
           <div class="card full">
-            <div class="sec-hdr"><div class="sec-title">&#128202; Cost Variance vs Market Average</div></div>
+            <div class="sec-hdr"><div class="sec-title">Cost Variance vs Market Average</div></div>
             <div class="table-wrap"><table>
               <thead><tr><th>Supplier</th><th>Total Bid</th><th>vs Market Avg</th><th>Potential Savings</th></tr></thead>
               <tbody id="costVarTable"></tbody>
@@ -496,7 +433,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
         <!-- 4: QUANTITY -->
         <div class="panel" id="panel-quantity">
           <div class="card full">
-            <div class="sec-hdr"><div class="sec-title">&#128230; Quantity Compliance by Product</div></div>
+            <div class="sec-hdr"><div class="sec-title">Quantity Compliance by Product</div></div>
             <div class="table-wrap"><table>
               <thead><tr><th>Product</th><th>Avg Qty</th><th>Supplier</th><th>Quoted Qty</th><th>Deviation</th><th>Status</th></tr></thead>
               <tbody id="qtyTable"></tbody>
@@ -508,14 +445,14 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
         <div class="panel" id="panel-ranking">
           <div class="two-col">
             <div class="card">
-              <div class="sec-hdr"><div class="sec-title">&#127942; Supplier Ranking</div></div>
+              <div class="sec-hdr"><div class="sec-title">Supplier Ranking</div></div>
               <div class="table-wrap"><table>
                 <thead><tr><th>#</th><th>Supplier</th><th>Total Bid</th><th>Avg Delivery</th><th>Score</th></tr></thead>
                 <tbody id="rankTable"></tbody>
               </table></div>
             </div>
             <div class="card">
-              <div class="sec-hdr"><div class="sec-title">&#127919; Evaluation Criteria</div></div>
+              <div class="sec-hdr"><div class="sec-title">Evaluation Criteria</div></div>
               <div class="criteria-row"><span class="cr-name">Price</span><span class="cr-weight" style="color:var(--coral)">40%</span></div>
               <div class="criteria-row"><span class="cr-name">Delivery Time</span><span class="cr-weight" style="color:var(--teal)">25%</span></div>
               <div class="criteria-row"><span class="cr-name">Quantity Compliance</span><span class="cr-weight" style="color:var(--emerald)">20%</span></div>
@@ -529,11 +466,11 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
         <div class="panel" id="panel-variance">
           <div class="two-col">
             <div class="card">
-              <div class="sec-hdr"><div class="sec-title">&#9888;&#65039; Price Anomaly Flags</div></div>
+              <div class="sec-hdr"><div class="sec-title">Price Anomaly Flags</div></div>
               <div id="varianceFlags"></div>
             </div>
             <div class="card">
-              <div class="sec-hdr"><div class="sec-title">&#128201; Outlier Price Table</div></div>
+              <div class="sec-hdr"><div class="sec-title">Outlier Price Table</div></div>
               <div class="table-wrap"><table>
                 <thead><tr><th>Supplier</th><th>Product</th><th>Unit Price</th><th>vs Avg</th><th>Flag</th></tr></thead>
                 <tbody id="outlierTable"></tbody>
@@ -546,7 +483,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
         <div class="panel" id="panel-alternate">
           <div class="card full">
             <div class="sec-hdr">
-              <div class="sec-title">&#128260; Alternate Proposal Comparison</div>
+              <div class="sec-title">Alternate Proposal Comparison</div>
               <div class="sec-badge" style="background:var(--indigo-lt);color:var(--indigo)" id="alt-badge"></div>
             </div>
             <div id="altProposals"></div>
@@ -559,8 +496,8 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
           <!-- QCS project header card -->
           <div class="preview-card" id="qcs-proj-card">
             <div class="sec-hdr">
-              <div class="sec-title">&#128196; Quote Comparison Sheet</div>
-              <span class="qcs-badge">&#128203; QCS Mode</span>
+              <div class="sec-title">Quote Comparison Sheet</div>
+              <span class="qcs-badge">QCS Mode</span>
             </div>
             <div id="qcs-proj-info" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;font-size:13px"></div>
           </div>
@@ -569,7 +506,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
           <div class="panel" id="qcs-panel-summary">
             <div class="card full">
               <div class="sec-hdr">
-                <div class="sec-title">&#128101; Bidder Summary</div>
+                <div class="sec-title">Bidder Summary</div>
                 <div class="sec-badge" id="qbadge-summary" style="background:var(--coral-lt);color:var(--coral)"></div>
               </div>
               <div class="bidder-grid" id="qcs-bidder-cards"></div>
@@ -584,11 +521,11 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
           <div class="panel" id="qcs-panel-ranking">
             <div class="two-col">
               <div class="card">
-                <div class="sec-hdr"><div class="sec-title">&#127942; Total Price Ranking</div></div>
+                <div class="sec-hdr"><div class="sec-title">Total Price Ranking</div></div>
                 <canvas id="qcs-rank-chart" height="260"></canvas>
               </div>
               <div class="card">
-                <div class="sec-hdr"><div class="sec-title">&#128201; Price Comparison Table</div></div>
+                <div class="sec-hdr"><div class="sec-title">Price Comparison Table</div></div>
                 <div class="table-wrap">
                   <table><thead><tr><th>Rank</th><th>Bidder</th><th>Type</th><th>Total Price</th><th>vs Lowest</th></tr></thead>
                   <tbody id="qcs-rank-table"></tbody></table>
@@ -601,8 +538,8 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
           <div class="panel" id="qcs-panel-heatmap">
             <div class="card full">
               <div class="sec-hdr">
-                <div class="sec-title">&#128200; Unit Price Heatmap — Line Items × Bidders</div>
-                <div class="sec-badge" style="background:var(--violet-lt);color:var(--violet)">Green = cheapest &nbsp;&#183;&nbsp; Red = most expensive per item</div>
+                <div class="sec-title">Unit Price Heatmap — Items × Bidders</div>
+                <div class="sec-badge" style="background:var(--violet-lt);color:var(--violet)">Low price = green &nbsp;&middot;&nbsp; High price = red per item</div>
               </div>
               <div class="hm-wrap" id="qcs-heatmap-wrap"></div>
             </div>
@@ -612,7 +549,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
           <div class="panel" id="qcs-panel-lowest">
             <div class="card full">
               <div class="sec-hdr">
-                <div class="sec-title">&#128203; Lowest Price Per Line Item</div>
+                <div class="sec-title">Lowest Price Per Line Item</div>
                 <div class="sec-badge" id="qbadge-lowest" style="background:var(--teal-lt);color:var(--teal)"></div>
               </div>
               <div class="table-wrap">
@@ -626,26 +563,26 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
           <div class="panel" id="qcs-panel-savings">
             <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
               <div class="kpi-card">
-                <div class="kpi-icon" style="background:var(--emerald-lt)">&#128201;</div>
+                
                 <div class="kpi-label">Best Single Supplier</div>
                 <div class="kpi-value" id="qs-best" style="color:var(--emerald);font-size:26px">-</div>
                 <div class="kpi-sub" id="qs-best-name"></div>
               </div>
               <div class="kpi-card">
-                <div class="kpi-icon" style="background:var(--violet-lt)">&#127919;</div>
+                
                 <div class="kpi-label">Cherry-Pick Minimum</div>
                 <div class="kpi-value" id="qs-cherry" style="color:var(--violet);font-size:26px">-</div>
                 <div class="kpi-sub">Theoretical best (multi-supplier)</div>
               </div>
               <div class="kpi-card">
-                <div class="kpi-icon" style="background:var(--amber-lt)">&#128181;</div>
+                
                 <div class="kpi-label">Potential Savings</div>
                 <div class="kpi-value" id="qs-save" style="color:var(--amber);font-size:26px">-</div>
                 <div class="kpi-sub" id="qs-save-pct"></div>
               </div>
             </div>
             <div class="card full">
-              <div class="sec-hdr"><div class="sec-title">&#128203; Cherry-Pick Detail — Best Bidder Per Item</div></div>
+              <div class="sec-hdr"><div class="sec-title">Cherry-Pick Detail — Best Bidder Per Item</div></div>
               <div class="table-wrap">
                 <table><thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Best Bidder</th><th>Best Unit Price</th><th>Best Total</th><th>vs Single-Supplier Total</th></tr></thead>
                 <tbody id="qcs-savings-table"></tbody></table>
@@ -657,15 +594,56 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
           <div class="panel" id="qcs-panel-flags">
             <div class="two-col">
               <div class="card">
-                <div class="sec-hdr"><div class="sec-title">&#9888;&#65039; Commercial Risk Flags</div></div>
+                <div class="sec-hdr"><div class="sec-title">Commercial Risk Flags</div></div>
                 <div id="qcs-flags-list"></div>
               </div>
               <div class="card">
-                <div class="sec-hdr"><div class="sec-title">&#128202; Price Spread Summary</div></div>
+                <div class="sec-hdr"><div class="sec-title">Price Spread Summary</div></div>
                 <div class="table-wrap">
                   <table><thead><tr><th>Item</th><th>Low</th><th>High</th><th>Spread %</th><th>Risk</th></tr></thead>
                   <tbody id="qcs-spread-table"></tbody></table>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QCS-7: Recommendation -->
+          <div class="panel" id="qcs-panel-recommendation">
+            <div class="card full">
+              <div class="sec-hdr">
+                <div class="sec-title">Procurement Recommendation</div>
+                <div class="sec-badge" id="qbadge-recommendation" style="background:var(--navy-lt);color:var(--navy)"></div>
+              </div>
+              <div id="qcs-rec-narrative"></div>
+              <div class="two-col" style="margin-top:1.25rem">
+                <div>
+                  <div style="font-family:var(--syne);font-size:12px;font-weight:700;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:.75rem">Weighted Scoring — All Bidders</div>
+                  <div class="table-wrap">
+                    <table><thead><tr><th>Rank</th><th>Bidder</th><th>Type</th><th>Price (40%)</th><th>Scope (25%)</th><th>Bid Type (20%)</th><th>Validity (15%)</th><th>Total Score</th></tr></thead>
+                    <tbody id="qcs-rec-table"></tbody></table>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-family:var(--syne);font-size:12px;font-weight:700;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:.75rem">Multi-Criteria Radar</div>
+                  <canvas id="qcs-radar" height="260"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QCS-3b: Bid Levelling -->
+          <div class="panel" id="qcs-panel-levelling">
+            <div class="card full">
+              <div class="sec-hdr">
+                <div class="sec-title">Bid Levelling — Scope Gap Analysis</div>
+                <div class="sec-badge" id="qbadge-levelling" style="background:var(--sienna-lt);color:var(--sienna)"></div>
+              </div>
+              <div id="qcs-lev-legend" style="margin-bottom:.75rem;display:flex;flex-wrap:wrap;gap:.25rem"></div>
+              <div class="hm-wrap" id="qcs-lev-matrix" style="margin-bottom:1.25rem"></div>
+              <div style="font-family:var(--syne);font-size:12px;font-weight:700;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:.75rem">Scope-Adjusted Totals — Apples-to-Apples Comparison</div>
+              <div class="table-wrap">
+                <table><thead><tr><th>Bidder</th><th>As-Bid Total</th><th>Items Priced</th><th>EXCL Items</th><th>N/A Items</th><th>Est. Gap Cost</th><th>Adjusted Total</th><th>vs Lowest Adjusted</th><th>Scope Score</th></tr></thead>
+                <tbody id="qcs-lev-table"></tbody></table>
               </div>
             </div>
           </div>
@@ -690,7 +668,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
     </div>
     <div style="padding:1rem 1.5rem" id="colModalBody"></div>
     <div style="padding:1rem 1.5rem;border-top:1px solid var(--border2);display:flex;gap:.75rem">
-      <button onclick="applyColumnMap()" class="btn-run-all" style="flex:1;justify-content:center">&#10003; Apply &amp; Analyse</button>
+      <button onclick="applyColumnMap()" class="btn-run-all" style="flex:1;justify-content:center">Apply and Analyse</button>
       <button onclick="g('colModal').style.display='none'" class="btn-reset">Cancel</button>
     </div>
   </div>
@@ -703,10 +681,10 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.
   <div id="ts"></div>
 </footer>
 
-<div class="notif" id="notif"><span style="font-size:18px">&#10022;</span><span id="notif-msg"></span></div>
+<div class="notif" id="notif"><span id="notif-msg"></span></div>
 
 <script>
-const PAL=['#FF6540','#7C3AED','#0EA5E9','#059669','#F43F5E','#F59E0B','#4F46E5'];
+const PAL=['#2E5E8E','#2A4A35','#1C2E4A','#5A7052','#7A3D20','#6B1C28','#2A4160'];
 
 const SAMPLE=`Bid_ID,Supplier,Category,Product,Quantity,Unit_Price,Total_Amount,Delivery_Days,Proposal_Type
 BID001,Apex Materials,Packaging,Carton Box,500,4.50,2250,5,Original
@@ -1184,20 +1162,215 @@ function runQcsAnalysis(type){
   panel.classList.add('show');
   setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
   switch(type){
-    case 'summary': renderQcsSummary(); break;
-    case 'ranking': renderQcsRanking(); break;
-    case 'heatmap': renderQcsHeatmap(); break;
-    case 'lowest':  renderQcsLowest();  break;
-    case 'savings': renderQcsSavings(); break;
-    case 'flags':   renderQcsFlags();   break;
+    case 'summary':        renderQcsSummary();         break;
+    case 'ranking':        renderQcsRanking();         break;
+    case 'levelling':      renderQcsBidLevelling();    break;
+    case 'heatmap':        renderQcsHeatmap();         break;
+    case 'lowest':         renderQcsLowest();          break;
+    case 'savings':        renderQcsSavings();         break;
+    case 'recommendation': renderQcsRecommendation();  break;
+    case 'flags':          renderQcsFlags();           break;
   }
-  toast('QCS '+type+' analysis complete');
+  toast(type+' analysis ready');
 }
 
 function runQcsAll(){
-  ['summary','ranking','heatmap','lowest','savings','flags']
-    .forEach((t,i)=>setTimeout(()=>runQcsAnalysis(t),i*140));
+  ['summary','ranking','levelling','heatmap','lowest','savings','recommendation','flags']
+    .forEach((t,i)=>setTimeout(()=>runQcsAnalysis(t),i*160));
   toast('Running all QCS analyses…');
+}
+
+/* ── QCS: Bid Levelling ── */
+function renderQcsBidLevelling(){
+  const items=qcsData.line_items,bs=qcsData.bidders;
+  if(!items.length){g('qcs-lev-matrix').innerHTML='<p style="padding:2rem;text-align:center;color:var(--text-3)">No line items found.</p>';return;}
+
+  const DEF={
+    COST: {bg:'#E8F2ED',tc:'#1A4A2A'},
+    INCL: {bg:'#EBF3FA',tc:'#1A3A5C'},
+    EXCL: {bg:'#F2E8EA',tc:'#5B1520'},
+    'N/A':{bg:'#F0F2F5',tc:'#6B7280'},
+    PLUG: {bg:'#F5EDE5',tc:'#6B3010'},
+  };
+  const defOf=(it,n)=>{
+    const d=it.definitions&&it.definitions[String(n)];
+    if(d)return d.toUpperCase().trim();
+    const p=it.prices&&it.prices[String(n)];
+    return(p&&p>0)?'COST':'N/A';
+  };
+
+  // Legend
+  g('qcs-lev-legend').innerHTML=Object.entries(DEF).map(([k,s])=>
+    `<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text-3)">
+      <span style="width:30px;height:16px;background:${s.bg};border:1px solid ${s.tc}44;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:${s.tc}">${k}</span>
+      ${k==='COST'?'Priced':k==='INCL'?'Included elsewhere':k==='EXCL'?'Excluded — scope gap':k==='N/A'?'Not applicable':'Estimated / plug'}
+    </span>`
+  ).join('');
+
+  // Scope gap matrix
+  const nb=bs.length;
+  const cols=`200px ${' 1fr'.repeat(nb).trim()}`;
+  let mat=`<div class="qcs-hm" style="grid-template-columns:${cols}">`;
+  mat+='<div class="qcs-col-hdr" style="font-size:9px">Item</div>';
+  bs.forEach(b=>mat+=`<div class="qcs-col-hdr">${b.name.length>13?b.name.slice(0,11)+'…':b.name}</div>`);
+  items.slice(0,50).forEach(it=>{
+    const d=it.description;
+    mat+=`<div class="qcs-hm-label" title="${d}">${d.length>36?d.slice(0,34)+'…':d}</div>`;
+    bs.forEach(b=>{
+      const def=defOf(it,b.num);
+      const s=DEF[def]||DEF['N/A'];
+      mat+=`<div class="qcs-cell" style="background:${s.bg};color:${s.tc};font-size:8px;letter-spacing:.02em">${def}</div>`;
+    });
+  });
+  mat+='</div>';
+  if(items.length>50)mat+=`<p style="font-size:11px;color:var(--text-3);margin-top:.5rem;text-align:center">First 50 of ${items.length} items shown</p>`;
+  g('qcs-lev-matrix').innerHTML=mat;
+
+  // Scope metrics + adjusted totals
+  const metrics=bs.map(b=>{
+    const priced=items.filter(it=>defOf(it,b.num)==='COST').length;
+    const incl  =items.filter(it=>defOf(it,b.num)==='INCL').length;
+    const excl  =items.filter(it=>defOf(it,b.num)==='EXCL').length;
+    const na    =items.filter(it=>defOf(it,b.num)==='N/A').length;
+    const pct   =items.length>0?(priced/items.length*100).toFixed(0):100;
+    let gap=0;
+    items.forEach(it=>{
+      const d=defOf(it,b.num);
+      if(d==='EXCL'||d==='N/A'){
+        const others=bs.filter(ob=>ob.num!==b.num).map(ob=>it.prices&&it.prices[String(ob.num)]).filter(p=>p&&p>0);
+        if(others.length)gap+=others.reduce((a,x)=>a+x,0)/others.length*(it.qty||1);
+      }
+    });
+    return{b,priced,incl,excl,na,pct,gap,adj:(b.total_price||0)+gap};
+  }).sort((a,x)=>a.adj-x.adj);
+
+  const minAdj=metrics[0]?.adj||0;
+  g('qbadge-levelling').textContent=metrics.filter(m=>m.excl>0).length+' bidders with EXCL items';
+  g('qcs-lev-table').innerHTML=metrics.map((m,i)=>{
+    const pct=minAdj>0?((m.adj-minAdj)/minAdj*100).toFixed(1):0;
+    const sc=+m.pct>=95?'chip-ok':+m.pct>=80?'chip-warn':'chip-pos';
+    return`<tr>
+      <td class="strong">${m.b.name}</td>
+      <td>${qfmt(m.b.total_price)}</td>
+      <td style="text-align:center;color:var(--forest)">${m.priced}</td>
+      <td style="text-align:center;color:var(--wine);font-weight:600">${m.excl}</td>
+      <td style="text-align:center;color:var(--slate)">${m.na}</td>
+      <td style="color:var(--sienna)">${m.gap>0?qfmt(m.gap):'—'}</td>
+      <td class="strong">${qfmt(m.adj)}</td>
+      <td>${i===0?'<span class="chip chip-ok">Lowest adjusted</span>':`<span class="chip chip-warn">+${pct}%</span>`}</td>
+      <td><span class="chip ${sc}">${m.pct}%</span></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── QCS: Final Recommendation ── */
+function renderQcsRecommendation(){
+  const bs=qcsData.bidders.filter(b=>b.total_price>0);
+  if(!bs.length){g('qcs-rec-narrative').innerHTML='<p style="color:var(--text-3)">Insufficient data.</p>';return;}
+  const items=qcsData.line_items;
+  const prices=bs.map(b=>b.total_price);
+  const maxP=Math.max(...prices),minP=Math.min(...prices);
+  const defOf=(it,n)=>{const d=it.definitions&&it.definitions[String(n)];if(d)return d.toUpperCase().trim();return(it.prices&&it.prices[String(n)]>0)?'COST':'N/A';};
+
+  const scored=bs.map(b=>{
+    const priceScore=maxP===minP?100:Math.round(((maxP-b.total_price)/(maxP-minP))*100);
+    const pricedCount=items.filter(it=>defOf(it,b.num)==='COST').length;
+    const scopeScore=items.length>0?Math.round(pricedCount/items.length*100):100;
+    const isFirm=b.bid_type&&!b.bid_type.toLowerCase().includes('budgetary');
+    const typeScore=isFirm?100:55;
+    const vd=b.validity_days||0;
+    const validityScore=vd<1?20:vd<7?35:Math.min(100,vd*3);
+    const total=Math.round(priceScore*0.40+scopeScore*0.25+typeScore*0.20+validityScore*0.15);
+    return{b,priceScore,scopeScore,typeScore,validityScore,total};
+  }).sort((a,x)=>x.total-a.total);
+
+  const w=scored[0],r=scored[1];
+  const isFirmW=w.b.bid_type&&!w.b.bid_type.toLowerCase().includes('budgetary');
+  const notes=[
+    !isFirmW?`<strong>Note:</strong> ${w.b.name} submitted a Budgetary bid — pricing is indicative and subject to revision at award.`:'',
+    w.b.validity_days&&w.b.validity_days<7?`<strong>Urgent:</strong> Bid validity is ${w.b.validity_days} day(s). Expedite decision.`:'',
+    r?`<strong>Backup:</strong> ${r.b.name} scores ${r.total}/100 and is the recommended alternate award candidate.`:'',
+  ].filter(Boolean).join(' &nbsp;|&nbsp; ');
+
+  g('qcs-rec-narrative').innerHTML=`
+    <div style="background:var(--navy-lt);border-left:4px solid var(--navy);border-radius:var(--radius-sm);padding:1.1rem 1.4rem">
+      <div style="font-size:10px;font-weight:700;color:var(--navy);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Award Recommendation</div>
+      <p style="font-size:13px;color:var(--text-2);line-height:1.7">
+        <strong>${w.b.name}</strong> achieves the highest weighted evaluation score of <strong>${w.total}/100</strong>
+        (Price&nbsp;${w.priceScore}&nbsp;&middot;&nbsp;Scope&nbsp;${w.scopeScore}%&nbsp;&middot;&nbsp;Type&nbsp;${w.typeScore}&nbsp;&middot;&nbsp;Validity&nbsp;${w.validityScore}).
+        ${notes?`<br><span style="font-size:12px;color:var(--text-3)">${notes}</span>`:''}
+      </p>
+    </div>`;
+
+  g('qbadge-recommendation').textContent=`Recommended: ${w.b.name} (${w.total}/100)`;
+
+  g('qcs-rec-table').innerHTML=scored.map((s,i)=>{
+    const rankCls=['r1','r2','r3','rn'][Math.min(i,3)];
+    const isFirm=s.b.bid_type&&!s.b.bid_type.toLowerCase().includes('budgetary');
+    const tb=isFirm?'<span class="chip chip-ok">Firm</span>':'<span class="chip chip-warn">Budgetary</span>';
+    return`<tr>
+      <td><span class="rank-badge ${rankCls}">${i+1}</span></td>
+      <td class="strong">${s.b.name}</td><td>${tb}</td>
+      <td style="text-align:center">${s.priceScore}</td>
+      <td style="text-align:center">${s.scopeScore}%</td>
+      <td style="text-align:center">${s.typeScore}</td>
+      <td style="text-align:center">${s.validityScore}</td>
+      <td style="min-width:130px">
+        <div class="score-row">
+          <div class="score-track"><div class="score-fill" style="width:${s.total}%;background:${i===0?'var(--forest)':i===1?'var(--steel)':'var(--slate)'}"></div></div>
+          <span class="score-num" style="color:${i===0?'var(--forest)':'var(--text-3)'}">${s.total}</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  setTimeout(()=>drawRadar('qcs-radar',
+    ['Price','Scope','Bid Type','Validity'],
+    scored.slice(0,4).map(s=>({name:s.b.name,values:[s.priceScore,s.scopeScore,s.typeScore,s.validityScore]})),
+    ['#2E5E8E','#2A4A35','#7A3D20','#6B1C28']
+  ),80);
+}
+
+/* ── Radar chart ── */
+function drawRadar(canvasId,labels,datasets,colors){
+  const canvas=g(canvasId);if(!canvas)return;
+  const dpr=window.devicePixelRatio||1;
+  const sz=Math.min(canvas.offsetWidth||300,300);
+  canvas.width=sz*dpr;canvas.height=sz*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const cx=sz/2,cy=sz/2,r=sz*0.32,n=labels.length;
+  const ang=i=>i*(2*Math.PI/n)-Math.PI/2;
+  // Grid
+  for(let lv=1;lv<=4;lv++){
+    ctx.beginPath();
+    for(let i=0;i<n;i++){const a=ang(i);const rr=r*lv/4;i===0?ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));}
+    ctx.closePath();ctx.strokeStyle='rgba(28,33,48,0.07)';ctx.lineWidth=1;ctx.stroke();
+  }
+  // Axes + labels
+  for(let i=0;i<n;i++){
+    const a=ang(i);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+    ctx.strokeStyle='rgba(28,33,48,0.1)';ctx.lineWidth=1;ctx.stroke();
+    const lx=cx+(r+18)*Math.cos(a),ly=cy+(r+18)*Math.sin(a);
+    ctx.fillStyle='#6B7280';ctx.font=`600 10px DM Sans,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(labels[i],lx,ly);
+  }
+  // Datasets
+  datasets.forEach((ds,di)=>{
+    ctx.beginPath();
+    ds.values.forEach((v,i)=>{const a=ang(i);const rv=Math.min(100,Math.max(0,v||0))/100*r;i===0?ctx.moveTo(cx+rv*Math.cos(a),cy+rv*Math.sin(a)):ctx.lineTo(cx+rv*Math.cos(a),cy+rv*Math.sin(a));});
+    ctx.closePath();
+    ctx.fillStyle=colors[di%colors.length]+'28';ctx.fill();
+    ctx.strokeStyle=colors[di%colors.length];ctx.lineWidth=2;ctx.stroke();
+    ds.values.forEach((v,i)=>{const a=ang(i);const rv=Math.min(100,Math.max(0,v||0))/100*r;ctx.beginPath();ctx.arc(cx+rv*Math.cos(a),cy+rv*Math.sin(a),3,0,2*Math.PI);ctx.fillStyle=colors[di%colors.length];ctx.fill();});
+  });
+  // Legend
+  datasets.forEach((ds,di)=>{
+    const lx=8,ly=sz-16+di*14;
+    ctx.fillStyle=colors[di%colors.length];ctx.fillRect(lx,ly-5,10,8);
+    ctx.fillStyle='#6B7280';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText(ds.name.length>16?ds.name.slice(0,14)+'…':ds.name,lx+14,ly);
+  });
 }
 
 /* helpers */
@@ -1318,7 +1491,7 @@ function renderQuantity(){
       const dev=((b.Quantity-avgQty)/avgQty*100).toFixed(1);
       const absDev=Math.abs(+dev);
       const statusText=absDev<5?'Compliant':absDev<15?'Minor deviation':'Significant deviation';
-      const statusIcon=absDev<5?'✅':absDev<15?'⚠️':'❌';
+      const statusIcon=absDev<5?'OK':absDev<15?'⚠️':'❌';
       const chipClass=absDev<5?'chip-ok':absDev<15?'chip-warn':'chip-pos';
       rows.push(`<tr>
         <td>${p}</td>
@@ -1356,7 +1529,7 @@ function renderRanking(){
   </tr>`).join('');
 
   g('evalScores').innerHTML=ranked.map((r,i)=>`<div class="score-card ${i===0?'winner':''}">
-    ${i===0?'<div class="crown">&#128081;</div>':''}
+    ${i===0?'<div class="crown">No.1</div>':''}
     <div class="sc-label">${r.s.split(' ')[0]}</div>
     <div class="sc-score ${i===0?'top':'reg'}">${Math.round(r.score)}</div>
     <div class="sc-unit">/ 100</div>
@@ -1376,16 +1549,16 @@ function renderVariance(){
       const pct=((b.Unit_Price-avgP)/avgP*100).toFixed(1);
       let flagLabel='';
       if(z<-1.5){
-        flagLabel='🔴 Suspiciously Low';
+        flagLabel='SUSPICIOUS LOW';
         if(!flags.find(f=>f.key===p+'low'))
           flags.push({key:p+'low',icon:'🔴',title:`${p} — Suspiciously Low Bid`,desc:`${b.Supplier} bid for ${p} is ${Math.abs(+pct).toFixed(1)}% below average — may indicate low quality, error, or dumping strategy`});
       } else if(z>1.5){
-        flagLabel='🟡 Price Outlier';
+        flagLabel='PRICE OUTLIER';
         if(!flags.find(f=>f.key===p+'high'))
           flags.push({key:p+'high',icon:'🟡',title:`${p} — Overpriced Bid`,desc:`${b.Supplier} bid for ${p} is ${(+pct).toFixed(1)}% above average — review value justification before awarding`});
       }
       if(flagLabel||Math.abs(+pct)>10)
-        rows.push({s:b.Supplier,p,u:b.Unit_Price,pct,flag:flagLabel||'✅ Normal'});
+        rows.push({s:b.Supplier,p,u:b.Unit_Price,pct,flag:flagLabel||'NORMAL'});
     });
   });
 
@@ -1422,7 +1595,7 @@ function renderAlternate(){
     +alts.map(b=>{
       const base=origAvg[b.Product]||b.Unit_Price;
       const pct=((b.Unit_Price-base)/base*100).toFixed(1);
-      const rec=+pct<-5?'✅ Consider':'⚠️ Review carefully';
+      const rec=+pct<-5?'CONSIDER':'REVIEW';
       return`<tr>
         <td class="strong">${b.Supplier}</td><td>${b.Product}</td>
         <td style="color:var(--text-3)">${b.Category}</td>
@@ -1469,7 +1642,7 @@ function renderQcsSummary(){
     const isLow=b.total_price&&b.total_price===minP;
     const pct=minP&&b.total_price?((b.total_price-minP)/minP*100).toFixed(1):null;
     return`<div class="bidder-card ${isLow?'lowest-card':isBudg?'budg-card':''}">
-      ${isLow?'<div class="bc-crown">&#127942;</div>':''}
+      ${isLow?'<div class="bc-crown">LOWEST</div>':''}
       <div class="bc-badge ${isBudg?'bc-budg':'bc-firm'}">${isBudg?'Budgetary':'Firm'}</div>
       <div class="bc-name" title="${b.name}">${b.name}</div>
       <div class="bc-price ${isLow?'low':''}">${qfmt(b.total_price)}</div>
@@ -1707,14 +1880,14 @@ function renderQcsFlags(){
   // Flag budgetary bids
   const budgBidders=bs.filter(b=>b.bid_type&&b.bid_type.toLowerCase().includes('budgetary'));
   if(budgBidders.length){
-    flags.push({type:'warn',em:'⚠️',ttl:'Budgetary Bids Detected',
+    flags.push({type:'warn',em:'WARN',ttl:'Budgetary Bids Detected',
       sub:`${budgBidders.map(b=>b.name).join(', ')} submitted budgetary (non-firm) bids. Prices may change significantly at award and are less reliable for comparison.`});
   }
 
   // Flag very short bid validity
   const shortValidity=bs.filter(b=>b.validity_days!=null&&b.validity_days<7);
   if(shortValidity.length){
-    flags.push({type:'danger',em:'🔴',ttl:'Critically Short Bid Validity',
+    flags.push({type:'danger',em:'RISK',ttl:'Critically Short Bid Validity',
       sub:`${shortValidity.map(b=>`${b.name} (${b.validity_days} day${b.validity_days!==1?'s':''})`).join(', ')} — these bids may expire before award. Expedite decision-making or request extension.`});
   }
 
@@ -1737,12 +1910,12 @@ function renderQcsFlags(){
     return sp>100;
   });
   if(highSpread.length){
-    flags.push({type:'warn',em:'📊',ttl:`${highSpread.length} Items with >100% Price Spread`,
+    flags.push({type:'warn',em:'DATA',ttl:`${highSpread.length} Items with >100% Price Spread`,
       sub:`High variance on: ${highSpread.slice(0,3).map(i=>i.description.slice(0,30)).join('; ')}${highSpread.length>3?'…':''}. Investigate scope alignment or specification differences.`});
   }
 
   if(!flags.length){
-    flags.push({type:'ok',em:'✅',ttl:'No Critical Flags Detected',sub:'All bids appear commercially reasonable. Proceed with technical evaluation.'});
+    flags.push({type:'ok',em:'OK',ttl:'No Critical Flags Detected',sub:'All bids appear commercially reasonable. Proceed with technical evaluation.'});
   }
 
   g('qcs-flags-list').innerHTML=flags.map(f=>`
